@@ -1,0 +1,237 @@
+@font-face {
+    font-family: poppins;
+    src: url("../font/Poppins/Poppins-Light.ttf");
+}
+@font-face {
+    font-family: poppins1;
+    src: url("../font/Poppins/Poppins-Medium.ttf");
+}
+@font-face {
+    font-family: poppins2;
+    src: url("../font/Poppins/Poppins-SemiBold.ttf");
+}
+@font-face {
+    font-family: poppins3;
+    src: url("../font/Poppins/Poppins-Regular.ttf");
+}
+ * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+   
+}
+        
+body.login-bg {
+    background-image: url("../images/bglogin.png");
+    background-repeat: no-repeat;
+    background-position: center; 
+    background-size: cover;
+    height: 100vh;
+    background-attachment: fixed;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top:80px ; 
+    width: 100%;
+}
+.form-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+   
+}
+
+.form-header h3 {
+    font-family: poppins2;
+    margin-top:10px;
+}
+
+.form-header p {
+    font-family: poppins3;
+    font-weight: 400;
+    font-size: 12px;
+    color: #666666;
+    margin-bottom: 30px;
+    
+}
+
+.white-box {
+    position: relative; 
+    background-color: #ffffff;
+    border-radius: 45px; 
+    padding: 40px 20px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.08);
+    height: auto;
+    min-height: 390px;
+    width: 400px;
+}
+
+.back-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4a5568;
+    border-radius: 50%;
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.back-btn:hover {
+    color: #111111;
+    background-color: #f7fafc;
+}
+
+.back-btn svg {
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.back-btn:hover svg {
+    transform: translateX(-2px);
+}
+
+.back-btn:active {
+    transform: scale(0.95);
+}
+
+
+.overlay{
+    width:100%;
+    height:100vh;
+    background:rgba(255,255,255,0.2);
+    backdrop-filter:blur(5px);
+}
+
+.input-group {
+    font-family: poppins1;
+    font-size: 12px;
+    color: #4a4a4a;
+    padding-left: 2px;
+    font-family: poppins1;
+    font-size: 12px;
+    color: #4a4a4a;
+    padding-left: 2px;
+}
+
+.input-group input {
+    width: 100%;
+    height: 48px;
+    border: 1px solid #111111;
+    border-radius: 7px; /* Smooth rounded shape matching screenshot */
+    padding: 0 10px;
+    font-family: poppins1;
+    font-size: 12px;
+    outline: none;
+    color: #000000;
+}
+
+
+.input-group input::placeholder {
+    color: #b5b5b5;
+}
+
+.field-error {
+    color: #e53e3e;
+    font-family: poppins, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    margin-top: 4px;
+    display: block;
+    padding-left: 4px;
+    text-align: left;
+    line-height: 1.4;
+}
+
+.form-error {
+    color: #e53e3e;
+    font-family: poppins, sans-serif;
+    font-size: 12px;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.input-error-border {
+    border: 1px solid #e53e3e !important;
+    background-color: #fff5f5;
+}
+
+.person3 {
+    align-items: center;
+    height:75px;
+    width:auto;
+    margin-bottom:10px;
+    margin-top:10px;
+}
+
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+}
+
+.options{
+    font-family:poppins1;
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    padding-bottom:14px;
+    align-items: center;
+  
+}
+
+.options input[type="checkbox"] {
+   width:18x;
+   height:12px;
+   margin-top: 7px;
+
+}
+
+.login-btn{
+    font-family:poppins2;
+    width:100%;
+    padding:12px;
+    background:#006400;
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:12px;
+}
+
+.form-mail{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    width:auto;
+    margin-bottom:20px;
+   
+   
+}
+
+.mail{
+    width:16px;
+    height:17px;
+    margin:3;
+    display:block;
+}
+
+.form-mail p{
+    margin:0;
+    padding:0;
+    line-height:1;
+    font-family:poppins3;
+    font-size:12px;
+    color:#666666;
+}
+   

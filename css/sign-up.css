@@ -1,0 +1,421 @@
+@font-face {
+    font-family: poppins;
+    src: url("../font/Poppins/Poppins-Regular.ttf");
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;   
+}
+
+body.login-bg::-webkit-scrollbar {
+    display: none;
+} 
+body.login-bg {
+    background-image: url("../images/bglogin.png");
+    background-repeat: no-repeat;
+    background-position: center; 
+    background-size: cover;
+    height: 100vh;
+    background-attachment: fixed; 
+}
+
+body.index-bg{
+    background-color: white;
+}
+
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 60px;
+    width: 100%;
+}
+
+/* White Box Premium Card Wrapper */
+.signup-whitebox {
+    position: relative;
+    background-color: #ffffff;
+    border-radius: 30px; 
+    padding: 40px 30px; 
+    box-shadow: 0px 20px 50px rgba(0, 0, 0, 0.12), 0px 5px 15px rgba(0, 0, 0, 0.04); 
+    width: 400px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
+    animation: premiumReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes premiumReveal {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Header Sections Styling */
+.signupform-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.signupform-header h3 {
+    font-family: poppins;
+    font-weight: 600;
+    font-size: 140%;
+    color: #111111;
+    margin: 5px 0 2px 0;
+}
+
+.signupform-header p {
+    font-family: poppins;
+    font-weight: 400;
+    font-size: 12.5px;
+    color: #666666;
+    margin: 0 10% 10px 10%;
+    line-height: 1.4;
+}
+
+.person1 {
+    width: 15%;
+    height: auto;
+    margin-bottom: 5px;
+}
+
+/* Layout Form Grid Structures */
+.signup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; 
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-row-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px; 
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px; 
+}
+
+/* Labels Architecture */
+.form-group label {
+    font-family: poppins;
+    font-size: 11px;
+    font-weight: 600;
+    color: #222222;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+/* Text Inputs Styling Base */
+.form-group input {
+    font-family: poppins;
+    height: 42px; 
+    border: 1.5px solid #e2e8f0; 
+    border-radius: 10px; 
+    padding: 0 14px;
+    font-size: 13px;
+    outline: none;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    width: 100%; 
+    color: #333333;
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.form-group input:hover {
+    border-color: #a0aec0;
+    transform: translateY(-1px);
+}
+
+.form-group input:focus {
+    border-color: #111111; 
+    transform: translateY(0);
+    box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.08); 
+}
+
+/* ⚡ PREMIUM CUSTOM DROPDOWN SYSTEM ⚡ */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+/* The Selector Header Field */
+.dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: poppins;
+    height: 42px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0 14px;
+    font-size: 13px;
+    color: #333333;
+    background-color: #ffffff;
+    cursor: pointer;
+    box-sizing: border-box;
+    user-select: none;
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dropdown-header:hover {
+    border-color: #a0aec0;
+    transform: translateY(-1px);
+}
+
+/* Arrow Icon Handling Rotation */
+.arrow-icon {
+    width: 13px;
+    height: auto;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Opened Selector Field State styling */
+.custom-dropdown.open .dropdown-header {
+    border-color: #111111;
+    transform: translateY(0);
+    box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.08);
+}
+
+/* Rotates the separate image smoothly on open */
+.custom-dropdown.open .arrow-icon {
+    transform: rotate(180deg);
+}
+
+/* Beautiful Floating Dropdown Box Panel Options List */
+.dropdown-list {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 6px 0;
+    margin: 0;
+    list-style: none;
+    box-sizing: border-box;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    z-index: 99;
+    
+    /* Elegant Custom Animation setup properties */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Displays option box panel list smoothly when open trigger class applies */
+.custom-dropdown.open .dropdown-list {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Individual Dropdown Row List Item Layout text configurations */
+.dropdown-list li {
+    font-family: poppins;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #4a5568;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Hover styling updates over lists fields elements */
+.dropdown-list li:hover {
+    background-color: #f7fafc;
+    color: #111111;
+}
+
+/* Submit Button Interaction Styling */
+.submit-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: poppins;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #111111; 
+    border: none;
+    border-radius: 10px;
+    height: 46px;
+    width: 100%; 
+    margin-top: 8px;
+    cursor: pointer;
+    box-shadow: 0px 4px 12px rgba(17, 17, 17, 0.15);
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.submit-btn:hover {
+    background-color: #222222;
+    transform: translateY(-2px);
+    box-shadow: 0px 8px 20px rgba(17, 17, 17, 0.25);
+}
+
+.submit-btn:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0px 4px 8px rgba(17, 17, 17, 0.15);
+}
+
+.btn-icon {
+    width: 15px;
+    height: auto;
+    filter: invert(1);
+    transition: transform 0.25s ease;
+}
+
+.submit-btn:hover .btn-icon {
+    transform: scale(1.1);
+}
+
+.form-group.input-error input {
+    border-color: #e53e3e !important;
+    background-color: #fff5f5;
+    box-shadow: 0 0 0 4px rgba(229, 62, 62, 0.1) !important;
+}
+
+/* Red Error Label Text */
+.form-group.input-error label {
+    color: #e53e3e !important;
+}
+
+/* Shake Animation Keyframes */
+.shake-error {
+    animation: premiumShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes premiumShake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+#passGroup, #confirmGroup {
+    position: relative;
+}
+
+/* Password Input Field Layout Box Wrapper */
+.password-field-wrapper {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* Premium Eye Toggle Button */
+.toggle-password-btn {
+    position: absolute;
+    right: 14px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.4;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    user-select: none;
+}
+
+.toggle-password-btn:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+}
+
+/* Make sure password text doesn't overlap the eye icon */
+.password-field-wrapper input {
+    padding-right: 42px !important;
+}
+
+/* Dynamic Live Validation Text Messaging */
+.password-hint {
+    font-family: poppins;
+    font-size: 11px;
+    font-weight: 500;
+    color: #718096;
+    margin-top: -2px;
+    margin-bottom: 2px;
+    transition: color 0.25s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Success State for Live Hint Tracking */
+.password-hint.valid {
+    color: #38a169;
+}
+
+/* Error State for Live Hint Tracking */
+.password-hint.invalid {
+    color: #e53e3e;
+}
+
+.back-btn {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #4a5568; /* Elegant neutral gray color */
+    border-radius: 50%;
+    
+    /* Hardware accelerated animation configuration */
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Interactive Hover States */
+.back-btn:hover {
+    color: #111111; /* Sharp dark color accent focus */
+    background-color: #f7fafc; /* Very soft light circular background bloom */
+}
+
+/* Slide Left Micro-interaction effect on the internal SVG line */
+.back-btn svg {
+    transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.back-btn:hover svg {
+    transform: translateX(-2px); /* Delicately moves the arrow backward */
+}
+
+/* Tactile push click down response */
+.back-btn:active {
+    transform: scale(0.95);
+}
+
+.role-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.role-btn:hover { background: #0056b3; }
+.signup-form input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+}
