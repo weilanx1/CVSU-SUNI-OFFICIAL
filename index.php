@@ -8,24 +8,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/navbar.css">
      <link rel="stylesheet" href="css/index.css">
     
 </head>
 <body>
 
     <nav>
-        <div class="container nav-container">
-            <a href="#">
-                <img src="images/logo.png" alt="Suni Logo">
-            </a>
-            <ul>
-                <li><a href="#">+ Create Event</a></li>
+          <a href="">
+          <img src="images/logo.png" alt="Suni Logo">
+          </a>
+          <ul>
                 <li><a href="#" class="active">CvSU Events</a></li>
-                <li><button class="nav-btn" onclick="window.location.href='sign-in.html'">Sign in</button></li>
-            </ul>
-        </div>
-    </nav>
+                <li><a href="#">My Profile</a></li>
+                <li class="nav-icons">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <i class="fa-regular fa-bell fa-lg"></i>
+                </li>
+                <li><img src="images/sid.png" class="profile" alt="Profile"></li>
+          </ul>
+     </nav>
 
     <section class="main">
         <img src="images/cover.png" class="cover-photo" alt="Cover">

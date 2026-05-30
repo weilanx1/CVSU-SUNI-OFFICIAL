@@ -9,6 +9,7 @@ nav {
     padding-top: 22px;            
     padding-left: 20px; 
     padding-right: 40px; 
+    padding-bottom: 20px;
 }
 
 nav ul {
@@ -40,6 +41,31 @@ nav img {
     width: 140px; 
     height: auto;
     display: block;
+}
+
+.nav-icons {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    color: #333;
+    font-size: 16px;
+}
+
+.nav-icons i {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.nav-icons i:hover {
+    color: #528f67;
+}
+
+.profile {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e6e6e6;
 }
 
 .nav-btn {
