@@ -11,7 +11,7 @@
 
   <link rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-<link rel="stylesheet" href="/css/manage.css"/>
+<link rel="stylesheet" href="css/manage.css"/>
 <link rel="stylesheet" href="css/navbar.css">
 </head>
 <body>
@@ -22,32 +22,32 @@
       <div class="menu">
 
         <a href="#">
-          <img src="/images/dashboard.png" class="sidebar-icon">
+          <img src="images/dashboard.png" class="sidebar-icon">
           Dashboard
         </a>
 
         <a href="#" class="active">
-          <img src="/images/manageevent.png" class="sidebar-icon">
+          <img src="images/manageevent.png" class="sidebar-icon">
           Manage Events
         </a>
 
         <a href="#">
-          <img src="/images/person2.png" class="sidebar-icon">
+          <img src="images/person2.png" class="sidebar-icon">
           Profile
         </a>
 
         <a href="#">
-          <img src="/images/analytics.png" class="sidebar-icon">
+          <img src="images/analytics.png" class="sidebar-icon">
           Analytics
         </a>
 
         <a href="#">
-          <img src="/images/permission.png" class="sidebar-icon">
+          <img src="images/permission.png" class="sidebar-icon">
           Permission Control
         </a>
 
         <a href="#">
-          <img src="/images/settings.png" class="sidebar-icon">
+          <img src="images/settings.png" class="sidebar-icon">
           Settings
         </a>
 
@@ -75,7 +75,7 @@
                 <li><a href="#" class="active">CvSU Events</a></li>
                 <li><a href="#" class="active">My Profile</a></li>
                 <li><a href="#" class="active">Organization Dashboard</a></li>
-                <li><img src="/images/sid.png" class="profile"></li>
+                <li><img src="images/sid.png" class="profile"></li>
             </ul>
         </div>
     </nav>
@@ -92,7 +92,7 @@
           Active ●
         </div>
         <div class="event-img">
-          <img src="/images/stardew.png" alt="">
+          <img src="images/stardew.png" alt="">
         </div>
 
         <div class="event-content">
@@ -108,22 +108,22 @@
           <div class="details">
 
             <div class="detail">
-              <img src="/images/calendar.png" class="btnIcon">
+              <img src="images/calendar.png" class="btnIcon">
               April 25, 2026
             </div>
 
             <div class="detail">
-              <img src="/images/clock.png" class="btnIcon">
+              <img src="images/clock.png" class="btnIcon">
               5:00 PM – 10:00 PM
             </div>
 
             <div class="detail">
-              <img src="/images/location.png" class="btnIcon">
+              <img src="images/location.png" class="btnIcon">
               CvSU – University Oval
             </div>
 
             <div class="detail">
-              <img src="/images/register.png" class="btnIcon">
+              <img src="images/register.png" class="btnIcon">
               128 Registered
             </div>
 
@@ -132,7 +132,7 @@
           <div class="card-buttons">
 
             <a href="#" class="view-btn">
-              <img src="/images/openview.png" alt="" class="btn-icon">
+              <img src="images/openview.png" alt="" class="btn-icon">
               View Event Page
             </a>
 
@@ -152,7 +152,7 @@
           Active ●
         </div>
         <div class="event-img">
-          <img src="/images/stardew.png" alt="">
+          <img src="images/stardew.png" alt="">
         </div>
         <div class="event-content">
           <h2>Hydrofest</h2>
@@ -163,25 +163,25 @@
           </p>
           <div class="details">
            <div class="detail">
-              <img src="/images/calendar.png" class="btnIcon">
+              <img src="images/calendar.png" class="btnIcon">
               April 25, 2026
             </div>
             <div class="detail">
-              <img src="/images/clock.png" class="btnIcon">
+              <img src="images/clock.png" class="btnIcon">
               5:00 PM – 10:00 PM
             </div>
             <div class="detail">
-              <img src="/images/location.png" class="btnIcon">
+              <img src="images/location.png" class="btnIcon">
               CvSU – University Oval
             </div>
             <div class="detail">
-              <img src="/images/register.png" class="btnIcon">
+              <img src="images/register.png" class="btnIcon">
               128 Registered
             </div>
           </div>
           <div class="card-buttons">
             <a href="#" class="view-btn">
-              <img src="/images/openview.png" alt="" class="btn-icon">
+              <img src="images/openview.png" alt="" class="btn-icon">
               View Event Page
             </a>
             <a href="#" class="manage-link">
