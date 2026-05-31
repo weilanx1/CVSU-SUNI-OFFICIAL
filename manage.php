@@ -41,7 +41,7 @@
           Analytics
         </a>
 
-        <a href="#">
+        <a href="permission-control.php">
           <img src="images/permission.png" class="sidebar-icon">
           Permission Control
         </a>

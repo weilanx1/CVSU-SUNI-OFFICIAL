@@ -1,0 +1,26 @@
+ @font-face {
+    font-family: bricolage;
+    src: url("../font/bricolage/BricolageGrotesque-VariableFont_opsz,wdth,wght.ttf");
+}
+ *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:'Poppins', sans-serif;
+    }
+
+    body{
+      background:#f4f4f4;
+      display:flex;
+      min-height:100vh;
+      overflow:hidden;
+    }
+
+
+
+
+
+
+
+
+    
