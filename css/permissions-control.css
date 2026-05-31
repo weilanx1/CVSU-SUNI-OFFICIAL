@@ -2,19 +2,225 @@
     font-family: bricolage;
     src: url("../font/bricolage/BricolageGrotesque-VariableFont_opsz,wdth,wght.ttf");
 }
- *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family:'Poppins', sans-serif;
-    }
+ 
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
 
-    body{
-      background:#f4f4f4;
-      display:flex;
-      min-height:100vh;
-      overflow:hidden;
-    }
+body{
+    background:#f4f4f4;
+    display:flex;
+    min-height:100vh;
+    overflow:hidden;
+}
+
+   
+.permissions-view-container {
+    padding: 3rem 4.5rem;
+    font-family: 'Poppins', sans-serif;
+    color: #000000;
+    box-sizing: border-box;
+}
+
+.view-title {
+    font-size: 1.85rem;
+    font-weight: 600;
+    margin: 0 0 2rem 0;
+}
+
+
+.table-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.75rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.filter-group {
+    display: flex;
+    gap: 1rem;
+}
+
+
+.custom-select-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.toolbar-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    border-radius: 20px;
+    padding: 0.45rem 2.5rem 0.45rem 1.25rem;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: #000000;
+    cursor: pointer;
+    min-width: 130px;
+    outline: none;
+}
+
+.select-caret {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+
+.btn-add-user {
+    background-color: #8cb49c; 
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    padding: 0.5rem 1.5rem;
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: opacity 0.2s;
+}
+
+.btn-add-user:hover {
+    opacity: 0.9;
+}
+
+
+.table-responsive-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.permissions-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+.permissions-table thead tr {
+    border-top: 2px solid #1a4d36;
+    border-bottom: 2px solid #1a4d36;
+}
+
+.permissions-table th {
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    color: #000000;
+}
+
+.permissions-table tbody tr {
+    border-bottom: 1px solid #e2e8f0;
+    transition: background-color 0.15s ease;
+}
+
+.permissions-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+.permissions-table td {
+    padding: 1rem;
+    vertical-align: middle;
+}
+
+
+.user-identity {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.table-avatar {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #cbd5e1;
+    flex-shrink: 0;
+}
+
+
+.placeholder-avatar {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 50%;
+    background-image: linear-gradient(135deg, #bae6fd 0%, #e0f2fe 100%);
+    background-color: #e2e8f0;
+    flex-shrink: 0;
+}
+
+.user-name {
+    font-weight: 500;
+    color: #000000;
+}
+
+.user-email {
+    color: #334155;
+}
+
+.user-role-text {
+    color: #000000;
+}
+
+.user-activity-status {
+    color: #64748b;
+}
+
+
+.text-center {
+  text-align: center;
+}
+
+
+.action-buttons-group {
+    display: inline-flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.25rem;
+    transition: transform 0.1s;
+}
+
+.action-btn:active {
+    transform: scale(0.92);
+}
+
+.edit-btn {
+    color: #334155;
+}
+
+.edit-btn:hover {
+    color: #000000;
+}
+
+.delete-btn {
+    color: #ef4444;
+}
+
+.delete-btn:hover {
+    color: #dc2626;
+}
 
 
 
