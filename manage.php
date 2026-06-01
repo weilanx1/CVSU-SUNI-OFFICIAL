@@ -3,35 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Organization Dashboard</title>
+  <title>Organization Dashboard - Permission Control</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-<link rel="stylesheet" href="css/manage.css"/>
-<link rel="stylesheet" href="css/navbar.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="css/manage.css"/>
+  <link rel="stylesheet" href="css/org-navbar.css">
+  <link rel="stylesheet" href="css/sidebar.css"/>
 </head>
 <body>
 
   <div class="sidebar">
     <div class="sidebar-top">
-
       <div class="menu">
-
+        <img src="images/logo.png" class="sidebar-logo">
+        
         <a href="#">
           <img src="images/dashboard.png" class="sidebar-icon">
           Dashboard
         </a>
 
-        <a href="#" class="active">
+        <a href="manage.php"  class="active">
           <img src="images/manageevent.png" class="sidebar-icon">
           Manage Events
         </a>
 
-        <a href="#">
+        <a href="org-profile.php">
           <img src="images/person2.png" class="sidebar-icon">
           Profile
         </a>
@@ -50,35 +50,37 @@
           <img src="images/settings.png" class="sidebar-icon">
           Settings
         </a>
-
       </div>
-
     </div>
 
     <div class="sidebar-bottom">
-
       <button class="org-btn">
         View Organization Page
         <i class="fa-solid fa-arrow-up-right-from-square"></i>
       </button>
-
     </div>
-
   </div>
+
   <div class="main">
     <nav>
         <div class="container nav-container">
             <a href="#">
-                <img src="images/logo.png" alt="Suni Logo">
+                <img src="images/logo.png" alt="Suni Logo" style="display:none;">
             </a>
             <ul>
-                <li><a href="#" class="active">CvSU Events</a></li>
-                <li><a href="#" class="active">My Profile</a></li>
+                <li><a href="#">+ Create Events</a></li>
+                <li><a href="index.php">CvSU Events</a></li>
+                <li><a href="#">My Profile</a></li>
                 <li><a href="#" class="active">Organization Dashboard</a></li>
+                <li class="nav-icons">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <i class="fa-regular fa-bell fa-lg"></i>
+                </li>
                 <li><img src="images/sid.png" class="profile"></li>
             </ul>
         </div>
     </nav>
+
     <div class="title-row">
       <h1>Manage events</h1>
 
@@ -136,7 +138,7 @@
               View Event Page
             </a>
 
-            <a href="#" class="manage-link">
+            <a href="manage-events.php" class="manage-link">
               <i class="fa-regular fa-pen-to-square"></i>
               Manage Event
             </a>

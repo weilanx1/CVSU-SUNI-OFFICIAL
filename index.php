@@ -19,8 +19,10 @@
           <img src="images/logo.png" alt="Suni Logo">
           </a>
           <ul>
+                <li><a href="create-events.php">+ Create Event</a></li>
                 <li><a href="#" class="active">CvSU Events</a></li>
                 <li><a href="#">My Profile</a></li>
+                <li><a href="dashboard.php">Organization Dashboard</a></li>
                 <li class="nav-icons">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <i class="fa-regular fa-bell fa-lg"></i>

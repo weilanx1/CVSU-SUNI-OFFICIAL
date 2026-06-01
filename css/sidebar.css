@@ -1,11 +1,11 @@
 @font-face {
-     font-family: poppins2;
-     src: url("../font/Poppins/Poppins-Medium.ttf");
- }
+  font-family: poppins2;
+  src: url("../font/Poppins/Poppins-Medium.ttf");
+}
 
-.sidebar{
-      width:240px;
-      background:#ffffff;
+.sidebar {
+  width:240px;
+  background:#ffffff;
       height:100vh;
       display:flex;
       flex-direction:column;

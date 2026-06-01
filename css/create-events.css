@@ -14,7 +14,7 @@
     box-sizing: border-box;
 }
 
-/* 1. LOCK MAIN VIEWPORT: Keeps header & page fixed without a browser scrollbar */
+
 html, body {
     margin: 0;
     padding: 0;
@@ -26,7 +26,7 @@ html, body {
     color: #1e293b;
 }
 
-/* 2. MAIN LAYOUT WRAPPER */
+
 .wrapper {
     max-width: 1200px; /* Gives the textboxes room so they don't stretch vertically */
     width: 90%;
@@ -109,13 +109,14 @@ html, body {
     overflow-y: auto; 
 }
 
-/* Custom subtle scrollbar styling so it doesn't look clunky */
 .event-container::-webkit-scrollbar {
     width: 5px;
 }
+
 .event-container::-webkit-scrollbar-track {
     background: transparent;
 }
+
 .event-container::-webkit-scrollbar-thumb {
     background: #e2e8f0;
     border-radius: 10px;
@@ -321,7 +322,10 @@ textarea {
     transition: 0.2s;
 }
 
-.switch input:checked + .slider { background: #034421; }
+.switch input:checked + .slider {
+     background: #034421; 
+    }
+    
 .switch input:checked + .slider::before { transform: translateX(22px); }
 
 /* 9. CTA CREATE ACTION BUTTON */
@@ -339,4 +343,6 @@ textarea {
     margin-top: 5px;
 }
 
-.create-btn:hover { background-color: #022c15; }
+.create-btn:hover { 
+    background-color: #022c15; 
+}

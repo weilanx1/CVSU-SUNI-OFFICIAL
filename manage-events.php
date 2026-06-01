@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-  <link rel="stylesheet" href="css/manage.css"/>
+  <link rel="stylesheet" href="css/manage-events.css"/>
   <link rel="stylesheet" href="css/org-navbar.css">
   <link rel="stylesheet" href="css/sidebar.css"/>
 </head>
@@ -21,7 +21,7 @@
       <div class="menu">
         <img src="images/logo.png" class="sidebar-logo">
         
-        <a href="#">
+        <a href="dashboard.php">
           <img src="images/dashboard.png" class="sidebar-icon">
           Dashboard
         </a>
@@ -81,8 +81,92 @@
         </div>
     </nav>
 
+    <a href="manage.php" class="back-link">
+      <i class="fa-solid fa-arrow-left"></i> Back to Manage Events
+    </a>
 
+    <h2 class="page-title">Edit and Manage Event</h2>
+    <p class="page-subtitle">Update your event details and settings.</p>
 
+    <div class="content-tabs">
+      <a href="manage-events.html" class="tab-item active">Details</a>
+      <a href="manage-events-banner.html" class="tab-item">Banner</a>
+      <a href="manage-events-guest.html" class="tab-item">Guest</a>
+      <a href="#" class="tab-item">Registration</a>
+    </div>
 
-</div>
+    <form action="" method="POST">
+      <div class="manage-card">
+        
+        <div class="form-group">
+          <label for="eventName">Event Name</label>
+          <div class="input-wrapper">
+            <input type="text" id="eventName" name="event_name" class="form-control" value="Hydrofest 2026" maxlength="120">
+            <span class="char-counter">15/120</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          
+          <div class="form-group">
+            <label>Start</label>
+            <div class="split-input">
+              <div class="input-wrapper date-side">
+                <input type="date" name="start_date" class="form-control" value="2025-04-25">
+              </div>
+              <div class="input-wrapper time-side">
+                <input type="time" name="start_time" class="form-control" value="17:00">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>End</label>
+            <div class="split-input">
+              <div class="input-wrapper date-side">
+                <input type="date" name="end_date" class="form-control" value="2026-04-25">
+              </div>
+              <div class="input-wrapper time-side">
+                <input type="time" name="end_time" class="form-control" value="22:00">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="timeZone">Time Zone</label>
+            <div class="input-wrapper select-wrapper has-icon">
+              <i class="fa-solid fa-earth-americas"></i>
+              <select id="timeZone" name="time_zone" class="form-control">
+                <option value="GMT+08:00" selected>GMT+08:00 Manila</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="form-group">
+          <label for="eventLocation">Event Location</label>
+          <div class="input-wrapper has-icon">
+            <i class="fa-solid fa-location-dot"></i>
+            <input type="text" id="eventLocation" name="event_location" class="form-control" value="CvSU - University Oval">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="description">Description</label>
+          <div class="input-wrapper">
+            <textarea id="description" name="description" class="form-control" placeholder="Add a description about your event..." maxlength="2000"></textarea>
+            <span class="char-counter">0/2000</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-cancel">Cancel</button>
+        <button type="submit" class="btn btn-save">Save Changes</button>
+      </div>
+    </form>
+    </div>
+</body>
 </html>

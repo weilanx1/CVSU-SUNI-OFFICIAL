@@ -15,7 +15,7 @@
 <nav>
         <div class="container nav-container">
             <a href="#">
-                <img src="images/logo.png" alt="Suni Logo" style="display:none;">
+                <img src="images/logo.png" alt="Suni Logo">
             </a>
             <ul>
                 <li><a href="#" class="active">+ Create Events</a></li>
