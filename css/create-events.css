@@ -1,0 +1,342 @@
+@font-face {
+    font-family: poppins;
+    src: url("../font/Poppins/Poppins-Regular.ttf");
+}
+
+@font-face {
+    font-family: bricolage;
+    src: url("../font/bricolage/BricolageGrotesque-VariableFont_opsz,wdth,wght.ttf");
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 1. LOCK MAIN VIEWPORT: Keeps header & page fixed without a browser scrollbar */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden; 
+    background: #fdfdfd;
+    font-family: 'Poppins', sans-serif;
+    color: #1e293b;
+}
+
+/* 2. MAIN LAYOUT WRAPPER */
+.wrapper {
+    max-width: 1200px; /* Gives the textboxes room so they don't stretch vertically */
+    width: 90%;
+    margin: 0 auto;
+    padding: 0 20px;
+    height: calc(100vh - 80px); /* Accounts for your top navbar height */
+    display: flex;
+    flex-direction: column;
+}
+
+/* 3. HEADER SECTION: Visibility aligned exactly to the far right edge */
+.header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 20px 0;
+    flex-shrink: 0;
+}
+
+.logo {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: white;
+    padding: 4px;
+    border: 1px solid #e2e8f0;
+}
+
+.org {
+    flex: 1;
+    margin-left: 20px;
+}
+
+.org h4 {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.org h1 {
+    font-size: 20px;
+    color: #0f172a;
+    margin: 2px 0;
+    font-weight: 700;
+}
+
+.org p {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.visibility {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #64748b;
+    margin-left: auto; /* Pushes element beautifully to the right margin line */
+}
+
+.visibility select {
+    width: 110px;
+    height: 36px;
+    padding: 0 10px;
+}
+
+/* 4. MAIN CONTAINER: Fluid layout without stretching components */
+.event-container {
+    display: grid;
+    grid-template-columns: 310px 1fr; /* Exact aspect ratio split as seen in design */
+    gap: 40px;
+    align-items: start;
+    flex: 1;
+    min-height: 0;
+    padding-bottom: 20px;
+    
+    /* Elegant fallback: if a user's display resolution is too short, 
+       only this workspace rolls down smoothly, instead of breaking layout */
+    overflow-y: auto; 
+}
+
+/* Custom subtle scrollbar styling so it doesn't look clunky */
+.event-container::-webkit-scrollbar {
+    width: 5px;
+}
+.event-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+.event-container::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+
+/* 5. LEFT SIDE PANEL (Banners Card Container) */
+.left-side {
+    background: #f4fbf7;
+    border: 1px solid #e2ebd9;
+    border-radius: 14px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.left-side h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 4px;
+}
+
+.left-side p {
+    color: #64748b;
+    font-size: 11px;
+    margin-bottom: 12px;
+}
+
+.img-box {
+    position: relative;
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Image constraints to ensure no vertical or horizontal stretching */
+.display {
+    width: 100%;
+    height: 220px; 
+    object-fit: cover;
+    display: block;
+}
+
+.cover {
+    width: 100%;
+    height: 95px; 
+    object-fit: cover;
+    display: block;
+}
+
+.img-add-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(15, 23, 42, 0.7);
+    border: none;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* 6. RIGHT SIDE PANEL (Input Form Framework) */
+.right-side {
+    display: flex;
+    flex-direction: column;
+    gap: 18px; /* Clean spacing matching reference data blocks */
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.field label, .time {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+select, .datetime-box, input[type="text"], textarea {
+    background-color: #f4fbf7 !important;
+    border: 1px solid #e2ebd9 !important;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #334155;
+}
+
+input[type="text"] {
+    width: 100%;
+    height: 40px;
+    padding: 0 14px;
+}
+
+textarea {
+    width: 100%;
+    height: 85px; 
+    padding: 12px;
+    resize: none;
+}
+
+/* 7. DATE GRID FORMATTING */
+.date-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 200px;
+    gap: 15px;
+    align-items: end;
+}
+
+.datetime-box {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    height: 40px;
+}
+
+.date-part {
+    flex: 1;
+    border-right: 1px solid #e2ebd9;
+}
+
+.time-part {
+    width: 95px;
+}
+
+.date-part input, .time-part input {
+    border: none !important;
+    background: transparent !important;
+    width: 100%;
+    height: 100%;
+    padding: 0 10px;
+    font-size: 13px;
+    outline: none;
+}
+
+.date-grid select {
+    width: 100%;
+    height: 40px;
+    padding: 0 10px;
+}
+
+/* 8. OPTIONS PANEL ELEMENT */
+.title-p {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.options-box {
+    background: #f4fbf7;
+    border: 1px solid #e2ebd9;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.option-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    font-size: 13px;
+}
+
+.option-row:not(:last-child) {
+    border-bottom: 1px solid #e2ebd9;
+}
+
+/* SWITCH LOGIC */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 22px;
+}
+
+.switch input { display: none; }
+
+.slider {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #cbd5e1;
+    border-radius: 34px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.slider::before {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 3px;
+    bottom: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.2s;
+}
+
+.switch input:checked + .slider { background: #034421; }
+.switch input:checked + .slider::before { transform: translateX(22px); }
+
+/* 9. CTA CREATE ACTION BUTTON */
+.create-btn {
+    width: 100%;
+    height: 42px;
+    background-color: #034421;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 5px;
+}
+
+.create-btn:hover { background-color: #022c15; }

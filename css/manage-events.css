@@ -1,13 +1,275 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins', sans-serif;
+/* Start mula sa iyong general setup */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
-body{
-    background:#f4f4f4;
-    display:flex;
-    min-height:100vh;
-    overflow:hidden;
+body {
+    background: #f4f4f4;
+    display: flex;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* --- Max-Optimized Sizing (Zero Scrollbar Layout) --- */
+:root {
+    --primary-green: #034421;    
+    --light-green-bg: #f5fbf7;   
+    --border-color: #e2e8f0;     
+    --text-main: #1e293b;        
+    --text-muted: #64748b;       
+}
+
+/* Main Container: Pinakipit ang vertical spacing para walang scrolling */
+.main {
+    flex: 1;
+    height: 100vh;
+    background-color: #ffffff;
+    padding: 15px 35px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+/* Back Link Button */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    transition: opacity 0.2s;
+}
+
+.back-link:hover {
+    opacity: 0.7;
+}
+
+.page-title {
+    font-size: 18px; 
+    font-weight: 700;
+    margin: 0 0 2px 0;
+    color: var(--text-main);
+}
+
+.page-subtitle {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin: 0 0 12px 0;
+}
+
+/* Horizontal Sub-tabs Nav */
+.content-tabs {
+    display: flex;
+    gap: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 12px;
+}
+
+.tab-item {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    padding-bottom: 6px;
+    position: relative;
+}
+
+.tab-item.active {
+    color: var(--primary-green);
+    font-weight: 600;
+}
+
+.tab-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-green);
+}
+
+/* Super Compact Card Wrapper */
+.manage-card {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px 20px; 
+    max-width: 950px;
+    background-color: #ffffff;
+}
+
+.form-group {
+    margin-bottom: 10px; 
+    position: relative;
+}
+
+.form-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+label {
+    display: block;
+    font-size: 11px; 
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: var(--text-main);
+}
+
+/* Input Wrappers at Controls */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 12px;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.form-control {
+    width: 100%;
+    background-color: var(--light-green-bg);
+    border: 1px solid #e1ebd6;
+    border-radius: 6px;
+    padding: 8px 12px; 
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    color: var(--text-main);
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-control:focus {
+    border-color: var(--primary-green);
+}
+
+/* Left padding kapag may manual icon lang (Location, Timezone) */
+.has-icon .form-control {
+    padding-left: 32px;
+}
+
+select.form-control {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 28px;
+    cursor: pointer;
+}
+
+.select-wrapper::after {
+    content: '\f107';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 12px;
+    color: var(--text-muted);
+    pointer-events: none;
+    font-size: 11px;
+}
+
+/* Siksik na Description Area */
+textarea.form-control {
+    resize: none;
+    height: 70px; 
+}
+
+/* Character Counter positions */
+.char-counter {
+    position: absolute;
+    right: 12px;
+    bottom: 8px;
+    font-size: 10px;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+/* Date and Time Group field splitting nang walang manual icons */
+.split-input {
+    display: flex;
+    background-color: var(--light-green-bg);
+    border: 1px solid #e1ebd6;
+    border-radius: 6px;
+}
+
+.split-input .form-control {
+    border: none;
+    background: transparent;
+    padding: 8px 10px; /* Pantay na padding para sa native pickers */
+}
+
+.split-input .date-side {
+    width: 58%;
+    border-right: 1px solid #e1ebd6;
+}
+
+.split-input .time-side {
+    width: 42%;
+}
+
+/* Cursor pointer para sa native calendar at clock picker icons */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* Action Buttons Footer Area */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 950px;
+    margin-top: 12px;
+}
+
+.btn {
+    font-family: 'Poppins', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 24px; 
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+
+.btn-cancel {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: var(--text-main);
+}
+
+.btn-cancel:hover {
+    background-color: #f8fafc;
+}
+
+.btn-save {
+    background-color: var(--primary-green);
+    color: #ffffff;
+}
+
+.btn-save:hover {
+    opacity: 0.9;
 }

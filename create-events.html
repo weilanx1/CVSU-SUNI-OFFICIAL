@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    <link rel="stylesheet" href="css/create-events.css">
+    <link rel="stylesheet" href="css/org-navbar.css">
+</head>
+<body>
+<nav>
+        <div class="container nav-container">
+            <a href="#">
+                <img src="images/logo.png" alt="Suni Logo" style="display:none;">
+            </a>
+            <ul>
+                <li><a href="#" class="active">+ Create Events</a></li>
+                <li><a href="index.php">CvSU Events</a></li>
+                <li><a href="#">My Profile</a></li>
+                <li><a href="#">Organization Dashboard</a></li>
+                <li class="nav-icons">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <i class="fa-regular fa-bell fa-lg"></i>
+                </li>
+                <li><img src="images/sid.png" class="profile"></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="wrapper">
+
+    <section class="header">
+        <img src="images/logocsg.png" class="logo">
+
+        <div class="org">
+            <h4>You're creating an event for</h4>
+            <h1>Central Student Government</h1>
+            <p>Fill in the details below to publish your event</p>
+        </div>
+
+        <div class="visibility">
+            <label>Visibility</label>
+            <div class="custom-select-wrapper">
+                <select>
+                    <option>🌐 Public</option>
+                    <option>🔒 Private</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <section class="event-container">
+
+        <div class="left-side">
+            <div class="left-section-group">
+                <h3>Event Image/Banner</h3>
+                <p>Upload or choose a banner for your event.</p>
+                <div class="img-box">
+                    <img src="images/stardew.png" class="display">
+                    <button type="button" class="img-add-btn"><i class="fa-solid fa-image-user"></i>➕</button>
+                </div>
+            </div>
+
+            <div class="left-section-group" style="margin-top: 15px;">
+                <h3>Cover Image/Banner</h3>
+                <div class="img-box">
+                    <img src="images/stardew.png" class="cover">
+                    <button type="button" class="img-add-btn"><i class="fa-solid fa-image-user"></i>➕</button>
+                </div>
+            </div>
+        </div>
+
+        <form class="right-side">
+
+            <div class="field">
+                <label for="event_name">Event Name</label>
+                <input type="text" id="event_name" name="event_name" placeholder="Enter event name" required>
+            </div>
+
+            <div class="date-grid">
+                <div>
+                    <label class="time">Start</label>
+                    <div class="datetime-box">
+                        <div class="date-part">
+                            <input type="date" id="start_date" name="start_date">
+                        </div>
+                        <div class="time-part">
+                            <input type="time" id="start_time" name="start_time">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="time">End</label>
+                    <div class="datetime-box">
+                        <div class="date-part">
+                            <input type="date" id="end_date" name="end_date">
+                        </div>
+                        <div class="time-part">
+                            <input type="time" id="end_time" name="end_time">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="timezone" class="time">Time Zone</label>
+                    <div class="custom-select-wrapper">
+                        <select id="timezone" name="timezone">
+                            <option value="GMT+08:00">GMT+08:00 Manila</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="location" class="locat">Event Location</label>
+                <input type="text" id="location" name="location" placeholder="📍 Add location or virtual link">
+            </div>
+
+            <div class="field">
+                <label for="description" class="title-p">Description</label>
+                <textarea id="description" name="description" placeholder="Add a description about your event..."></textarea>
+            </div>
+
+            <label class="title-p" style="margin-top: 20px;">Event Options</label>
+            <div class="options-box">
+                <div class="option-row">
+                    <div class="option-left">
+                        <span>🎟 Ticket Price</span>
+                    </div>
+                    <div class="option-right">
+                        Free ✏️
+                    </div>
+                </div>
+
+                <div class="option-row">
+                    <div class="option-left">
+                        <span>👤 Require Approval</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" name="require_approval">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="option-row">
+                    <div class="option-left">
+                        <span>👥 Capacity</span>
+                    </div>
+                    <div class="option-right">
+                        Unlimited ✏️
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="create-btn">Create Event</button>
+
+        </form>
+
+    </section>
+
+</div>
+</body>
+</html>
+    </body>
+</html>
