@@ -104,25 +104,33 @@ if (isset($_SESSION['user_id'])) {
       <div class="table-toolbar">
         <div class="filter-group">
           
-          <div class="custom-select-wrapper">
-            <select id="searchFilter" class="toolbar-select">
-              <option value="">Search</option>
-            </select>
-            <i class="fa-solid fa-chevron-down select-caret"></i>
+          <div class="custom-modal-dropdown" id="toolbarSearchDropdown" style="width: 140px;">
+            <div class="dropdown-selected-box" onclick="toggleDropdownEngine('toolbarSearchDropdown')" style="border-radius: 20px; border: 1px solid #000000; padding: 0.45rem 1.25rem;">
+              <span class="selected-value-label" style="color: #000000; font-size: 0.9rem;">Search</span>
+              <i class="fa-solid fa-chevron-down modal-select-caret"></i>
+            </div>
+            <ul class="dropdown-options-list">
+              <li onclick="selectDropdownOption('toolbarSearchDropdown', 'Search', '')">Search</li>
+            </ul>
+            <input type="hidden" name="filter_search" id="hiddenSearchInput" value="">
           </div>
 
-          <div class="custom-select-wrapper">
-            <select id="roleFilter" class="toolbar-select">
-              <option value="">Role</option>
-              <option value="admin">Admin</option>
-              <option value="moderator">Moderator</option>
-            </select>
-            <i class="fa-solid fa-chevron-down select-caret"></i>
+          <div class="custom-modal-dropdown" id="toolbarRoleDropdown" style="width: 140px;">
+            <div class="dropdown-selected-box" onclick="toggleDropdownEngine('toolbarRoleDropdown')" style="border-radius: 20px; border: 1px solid #000000; padding: 0.45rem 1.25rem;">
+              <span class="selected-value-label" style="color: #000000; font-size: 0.9rem;">Role</span>
+              <i class="fa-solid fa-chevron-down modal-select-caret"></i>
+            </div>
+            <ul class="dropdown-options-list">
+              <li onclick="selectDropdownOption('toolbarRoleDropdown', 'Role', '')">Role</li>
+              <li onclick="selectDropdownOption('toolbarRoleDropdown', 'Admin', 'admin')">Admin</li>
+              <li onclick="selectDropdownOption('toolbarRoleDropdown', 'Moderator', 'moderator')">Moderator</li>
+            </ul>
+            <input type="hidden" name="filter_role" id="hiddenRoleFilterInput" value="">
           </div>
 
         </div>
 
-        <button type="button" class="btn-add-user" onclick="handleAddUserClick()">
+        <button type="button" class="btn-add-user" onclick="openAddUserModal()">
           <i class="fa-solid fa-plus"></i> Add User
         </button>
       </div>
@@ -214,20 +222,137 @@ if (isset($_SESSION['user_id'])) {
     </div>
   </div>
 
-  <script>
-    function handleAddUserClick() {
-      console.log("Trigger Add User dialog interface layer.");
-    }
-    
-    function editUserPermission(userName) {
-      console.log("Modify system properties permissions for structural account node:", userName);
-    }
+            <div id="addHostModal" class="modal-overlay">
+              <div class="modal-card">
+                
+                <button type="button" class="modal-close-btn" onclick="closeAddUserModal()">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+                
+                <div class="modal-header-icon">
+                  <i class="fa-solid fa-user-gear"></i>
+                </div>
+                
+                <h2 class="modal-title">Add User</h2>
+                <p class="modal-subtitle">Add a user to get help managing the event.</p>
+                
+                <div class="modal-form-group">
+                  <label class="modal-label">Enter Email or Search</label>
+                  <input type="text" class="modal-input" placeholder="Search accounts or enter email addresses...">
+                </div>
+                
+                <div class="modal-form-group">
+                  <label class="modal-label">Select Role</label>
+                  <div class="custom-modal-dropdown" id="roleModalDropdown">
+                    
+                    <div class="dropdown-selected-box" onclick="toggleDropdownEngine('roleModalDropdown')">
+                      <span class="selected-value-label" id="selectedRoleText">Choose a role...</span>
+                      <i class="fa-solid fa-chevron-down modal-select-caret"></i>
+                    </div>
+                    
+                    <ul class="dropdown-options-list">
+                      <li onclick="selectDropdownOption('roleModalDropdown', 'Admin', 'admin')">Admin</li>
+                      <li onclick="selectDropdownOption('roleModalDropdown', 'Moderator', 'moderator')">Moderator</li>
+                    </ul>
 
-    function deleteUserPermission(userName) {
-      if(confirm(`Are you sure you want to revoke system panel access permissions from ${userName}?`)) {
-        console.log("Revoke application credentials request executed for target entry.");
+                    <input type="hidden" name="modal_user_role" id="hiddenRoleInput" value="">
+                  </div>
+                </div>
+                
+                <div class="modal-empty-state">
+                  <span class="empty-title">No Suggestions Found</span>
+                  <span class="empty-desc">You can invite users by entering their email address.</span>
+                </div>
+
+                <div class="modal-actions-footer">
+                  <button type="submit" class="btn-modal-primary" id="saveUserBtn">Add User</button>
+                </div>
+
+
+
+              </div>
+            </div>
+
+  <script>
+    function toggleDropdownEngine(dropdownId) {
+      event.stopPropagation();
+      
+      // Isinasara ang ibang dropdown kapag may binuksang bago
+      document.querySelectorAll('.custom-modal-dropdown').forEach(dropdown => {
+        if (dropdown.id !== dropdownId) {
+          dropdown.classList.remove('active');
+        }
+      });
+
+      const targetDropdown = document.getElementById(dropdownId);
+      if (targetDropdown) {
+        targetDropdown.classList.toggle('active');
       }
     }
+
+    function selectDropdownOption(containerId, displayLabel, processingValue) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const labelElement = container.querySelector('.selected-value-label');
+      if (labelElement) {
+        labelElement.innerText = displayLabel;
+        
+        // Pinapalitan ang kulay ng text kapag nakapili na (para sa modal body area)
+        if (containerId === 'roleModalDropdown') {
+          labelElement.style.color = '#0f172a';
+        }
+      }
+
+      const hiddenInput = container.querySelector('input[type="hidden"]');
+      if (hiddenInput) {
+        hiddenInput.value = processingValue;
+        console.log(`Dropdown tagumpay na nabago (${containerId}):`, processingValue);
+      }
+
+      container.classList.remove('active');
+    }
+
+    function openAddUserModal() {
+      const modal = document.getElementById('addHostModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        setTimeout(() => {
+          modal.classList.add('show-modal');
+        }, 10);
+      }
+    }
+    
+    function closeAddUserModal() {
+      const modal = document.getElementById('addHostModal');
+      if (modal) {
+        modal.classList.remove('show-modal');
+        setTimeout(() => {
+          modal.style.display = 'none';
+          document.querySelectorAll('.custom-modal-dropdown').forEach(dropdown => {
+            dropdown.classList.remove('active');
+          });
+        }, 200);
+      }
+    }
+
+    window.addEventListener('click', function(e) {
+      document.querySelectorAll('.custom-modal-dropdown').forEach(dropdown => {
+        if (!dropdown.contains(e.target)) {
+          dropdown.classList.remove('active');
+        }
+      });
+      
+      const modal = document.getElementById('addHostModal');
+      if (e.target === modal) {
+        closeAddUserModal();
+      }
+    });
+    
+    function editUserPermission(userName) { console.log("Edit requested for:", userName); }
+    function deleteUserPermission(userName) { if(confirm(`Are you sure you want to remove ${userName}?`)) console.log("Delete executed for:", userName); }
   </script>
+  <script src="js/navbar.js"></script>
+  
 </body>
 </html>

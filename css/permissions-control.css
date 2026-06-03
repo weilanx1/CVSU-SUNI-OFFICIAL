@@ -223,7 +223,296 @@ body{
 }
 
 
+/* ==========================================================================
+   MODAL BASE LAYOUT SYSTEM
+   ========================================================================== */
+.modal-overlay {
+    display: none; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.4); 
+    backdrop-filter: blur(2px);
+    justify-content: center;
+    align-items: center;
+    z-index: 999999;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
 
+.modal-overlay.show-modal {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-card {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 450px;
+    border-radius: 24px; 
+    padding: 32px;
+    position: relative;
+    color: #1e293b;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+    transform: scale(0.95);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay.show-modal .modal-card {
+    transform: scale(1);
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: #f1f5f9; 
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.modal-close-btn:hover {
+    background-color: #e2e8f0;
+    color: #0f172a;
+}
+
+.modal-header-icon {
+    width: 56px;
+    height: 56px;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: #334155;
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+}
+
+.modal-subtitle {
+    font-size: 0.875rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.modal-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.modal-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #334155;
+}
+
+.modal-input {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: #0f172a;
+    font-size: 0.925rem;
+    outline: none;
+    width: 100%;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-input:focus {
+    border-color: #8cb49c; 
+    box-shadow: 0 0 0 3px rgba(140, 180, 156, 0.15); 
+}
+
+/* ==========================================================================
+   UNIFIED CUSTOM DROPDOWN SYSTEM (TOOLBAR FILTERS & MODAL DROPDOWNS)
+   ========================================================================== */
+.custom-modal-dropdown {
+    position: relative;
+}
+
+/* Ang clickable primary box system */
+.dropdown-selected-box {
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+/* Default dynamic border state for standard boxes */
+.modal-form-group .dropdown-selected-box {
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: #64748b; 
+    font-size: 0.925rem;
+}
+
+.dropdown-selected-box:hover {
+    border-color: #94a3b8;
+}
+
+/* Active focus color accent matching */
+.custom-modal-dropdown.active .dropdown-selected-box {
+    border-color: #8cb49c !important;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(140, 180, 156, 0.15);
+}
+
+/* Smooth Arrow/Caret Transitions */
+.modal-select-caret {
+    font-size: 0.8rem;
+    color: #64748b;
+    transition: transform 0.2s ease;
+}
+
+.custom-modal-dropdown.active .modal-select-caret {
+    transform: rotate(180deg);
+}
+
+/* FLOATING OVERLAY PANEL CONTAINER */
+.dropdown-options-list {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px; 
+    padding: 6px;
+    margin: 0;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    z-index: 999999;
+    display: none;
+    
+    /* PROTEKSYON LABAN SA BULLET MARKS AT FRAMEWORK CONFLICTS */
+    list-style: none !important;
+    list-style-type: none !important;
+}
+
+.custom-modal-dropdown.active .dropdown-options-list {
+    display: block;
+}
+
+/* DROPDOWN INTERACTION ROWS */
+.dropdown-options-list li {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    color: #334155;
+    border-radius: 8px; 
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    margin: 0 !important;
+    
+    /* Strict list neutralization reset */
+    list-style: none !important;
+    list-style-type: none !important;
+}
+
+/* HOVER FEEDBACK HIGHLIGHT SYSTEM */
+.dropdown-options-list li:hover {
+    background-color: #f0fdf4 !important; 
+    color: #1a4d36 !important; 
+}
+
+/* Empty State Area Inside Modals */
+.modal-empty-state {
+    text-align: center;
+    padding: 20px 0 4px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    border-top: 1px solid #f1f5f9;
+    margin-top: 12px;
+}
+
+/* ==========================================================================
+   MODAL ACTIONS / FOOTER BUTTONS SYSTEM
+   ========================================================================== */
+.modal-actions-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* Primary Action Button (Add User / Save Changes) */
+.btn-modal-primary {
+    background-color: #8cb49c;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 0.925rem;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-modal-primary:hover {
+    opacity: 0.93;
+}
+
+.btn-modal-primary:active {
+    transform: scale(0.98);
+}
+
+/* Secondary Action Button (Cancel) */
+.btn-modal-secondary {
+    background-color: #ffffff;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-family: inherit;
+    font-weight: 500;
+    font-size: 0.925rem;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.btn-modal-secondary:hover {
+    background-color: #f8fafc;
+    color: #0f172a;
+    border-color: #94a3b8;
+}
+
+.btn-modal-secondary:active {
+    background-color: #f1f5f9;
+}
+
+.empty-title { font-size: 0.9rem; font-weight: 600; color: #64748b; }
+.empty-desc { font-size: 0.8rem; color: #94a3b8; }
 
 
 
