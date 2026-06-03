@@ -352,6 +352,22 @@ body {
     border-radius: 3px 3px 0 0;
 }
 
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.status-indicator.declined span::before {
+    color: #d32f2f;
+}
+
+.status-indicator.waitlisted span::before {
+    color: #f57c00;
+}
+
 .events-grid-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
