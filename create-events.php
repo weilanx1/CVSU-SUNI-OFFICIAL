@@ -123,6 +123,9 @@ if ($dept_res) {
                     <div class="visibility-option" data-value="Public">
                         <span>Public</span>
                     </div>
+                    <div class="visibility-option" data-value="Private">
+                        <span>Private (Only you can see)</span>
+                    </div>
                     <div class="visibility-option" data-value="Department Only">
                         <span>Department Only (<?php echo $org_dept_code; ?>)</span>
                     </div>

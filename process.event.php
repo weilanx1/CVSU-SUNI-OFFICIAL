@@ -97,8 +97,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 5. Execute Main Event Entry Injection with transaction and NULL-capacity handling
     $conn->begin_transaction();
     try {
-        // sanitize visibility
-        $allowedVis = ['public','department_only','restricted'];
+        // sanitize visibility, including new 'private' option
+        $allowedVis = ['public','private','department_only','restricted'];
         if (!in_array($visibility, $allowedVis)) $visibility = 'public';
 
         if ($capacity === null) {

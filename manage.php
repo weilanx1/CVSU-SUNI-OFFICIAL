@@ -153,7 +153,7 @@ if (isset($_SESSION['user_id'])) {
             echo '<div class="detail"><img src="images/register.png" class="btnIcon">' . $registered . ' Registered</div>';
             echo '</div>';
             echo '<div class="card-buttons">';
-            echo '<a href="eventpage.php?event_id=' . $eid . '" class="view-btn"><img src="images/openview.png" alt="" class="btn-icon">View Event Page</a>';
+            echo '<a href="view-event-page.php?event_id=' . $eid . '" class="view-btn"><img src="images/openview.png" alt="" class="btn-icon">View Event Page</a>';
             echo '<a href="manage-events.php?event_id=' . $eid . '" class="manage-link"><i class="fa-regular fa-pen-to-square"></i>Manage Event</a>';
             echo '</div></div></div>';
         }

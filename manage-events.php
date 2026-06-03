@@ -69,7 +69,9 @@ if (isset($_GET['event_id']) && $org_id) {
 // compute friendly visibility display (icons + dept codes)
 $visibility_display_inline = '🌐 Public';
 if (!empty($event)) {
-  if ($event['visibility'] === 'department_only') {
+  if ($event['visibility'] === 'private') {
+    $visibility_display_inline = '🔒 Private';
+  } elseif ($event['visibility'] === 'department_only') {
     $visibility_display_inline = '🏢 Department Only';
   } elseif ($event['visibility'] === 'restricted') {
     $codes = [];
@@ -106,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id']) && $org_i
   $selected_departments_post = isset($_POST['selected_departments']) ? trim($_POST['selected_departments']) : '';
 
   // sanitize visibility
-  $allowedVis = ['public','department_only','restricted'];
+  $allowedVis = ['public','private','department_only','restricted'];
   if (!in_array($visibility, $allowedVis)) $visibility = 'public';
 
   $upd = $conn->prepare('UPDATE events SET title = ?, description = ?, venue = ?, start_datetime = ?, end_datetime = ?, visibility = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
@@ -221,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id']) && $org_i
             <ul>
                 <li><a href="create-events.php">+ Create Events</a></li>
                 <li><a href="index.php">CvSU Events</a></li>
-                <li><a href="#">My Profile</a></li>
+                <li><a href="Myprofile.php">My Profile</a></li>
                 <li><a href="dashboard.php" class="active">Organization Dashboard</a></li>
                 <li class="nav-icons">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -299,6 +301,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id']) && $org_i
                   </div>
                   <div class="custom-visibility-panel" id="visibilityPanelInline" style="display:none; position:absolute; z-index:50;">
                     <div class="visibility-option" data-value="Public"><span>Public</span></div>
+                    <div class="visibility-option" data-value="Private"><span>Private (Only you can see)</span></div>
                     <div class="visibility-option" data-value="Department Only"><span>Department Only</span></div>
                     <div class="visibility-option-parent" id="filterDeptOptionInline">
                       <div class="option-header-title"><span>Restricted (Select Departments)</span></div>
@@ -433,7 +436,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id']) && $org_i
         if(visTrigger && visPanel){
           visTrigger.addEventListener('click', function(e){ e.stopPropagation(); visPanel.style.display = visPanel.style.display==='block' ? 'none' : 'block'; });
           // option clicks
-          visPanel.querySelectorAll('.visibility-option').forEach(function(opt){ opt.addEventListener('click', function(e){ e.stopPropagation(); var val=this.getAttribute('data-value'); if(val==='Public'){ visValue.textContent='🌐 Public'; hiddenType.value='public'; hiddenDepts.value=''; } else if(val==='Department Only'){ visValue.textContent='🏢 Department Only'; hiddenType.value='department_only'; hiddenDepts.value=''; } closeAllPanels(); }); });
+          visPanel.querySelectorAll('.visibility-option').forEach(function(opt){
+            opt.addEventListener('click', function(e){
+              e.stopPropagation();
+              var val = this.getAttribute('data-value');
+              if (val === 'Public') {
+                visValue.textContent = '🌐 Public';
+                hiddenType.value = 'public';
+                hiddenDepts.value = '';
+                // clear any checks
+                document.querySelectorAll('.dept-cb-inline').forEach(function(cb){ cb.checked = false; });
+                if (deptChecklistInline) deptChecklistInline.style.display = 'none';
+              } else if (val === 'Private') {
+                visValue.textContent = '🔒 Private';
+                hiddenType.value = 'private';
+                hiddenDepts.value = '';
+                document.querySelectorAll('.dept-cb-inline').forEach(function(cb){ cb.checked = false; });
+                if (deptChecklistInline) deptChecklistInline.style.display = 'none';
+              } else if (val === 'Department Only') {
+                visValue.textContent = '🏢 Department Only';
+                hiddenType.value = 'department_only';
+                hiddenDepts.value = '';
+                document.querySelectorAll('.dept-cb-inline').forEach(function(cb){ cb.checked = false; });
+                if (deptChecklistInline) deptChecklistInline.style.display = 'none';
+              }
+              closeAllPanels();
+            });
+          });
           // filter toggle
           if(filterInline) filterInline.addEventListener('click', function(e){ e.stopPropagation(); this.classList.toggle('open'); if(deptChecklistInline) deptChecklistInline.style.display = deptChecklistInline.style.display==='block' ? 'none' : 'block'; });
           // dept checkbox handling

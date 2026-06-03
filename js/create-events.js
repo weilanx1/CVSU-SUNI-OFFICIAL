@@ -106,10 +106,13 @@ document.addEventListener("DOMContentLoaded", function () {
             option.addEventListener('click', function (e) {
                 e.stopPropagation();
                 const val = this.getAttribute('data-value');
-
+            
                 if (val === 'Public') {
                     visibilityValue.textContent = '🌐 Public';
                     hiddenType.value = 'public';
+                } else if (val === 'Private') {
+                    visibilityValue.textContent = '🔒 Private';
+                    hiddenType.value = 'private';
                 } else if (val === 'Department Only') {
                     visibilityValue.textContent = '🏢 Department Only';
                     hiddenType.value = 'department_only';
