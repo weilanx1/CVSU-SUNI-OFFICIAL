@@ -1,3 +1,19 @@
+<?php
+session_start();
+require_once 'db.php';
+
+$profile_picture = 'images/person3.png';
+if (isset($_SESSION['user_id'])) {
+    $stmt = $conn->prepare('SELECT profile_picture FROM users WHERE id = ? LIMIT 1');
+    $stmt->bind_param('i', $_SESSION['user_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    if ($user && !empty($user['profile_picture'])) {
+        $profile_picture = htmlspecialchars($user['profile_picture']);
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,7 +36,7 @@
     <div class="sidebar-top">
       <div class="menu">
         <img src="images/logo.png" class="sidebar-logo">
-        <a href="#"><img src="images/dashboard.png" class="sidebar-icon"> Dashboard</a>
+        <a href="dashboard.php"><img src="images/dashboard.png" class="sidebar-icon"> Dashboard</a>
         <a href="manage.php" class="active"><img src="images/manageevent.png" class="sidebar-icon"> Manage Events</a>
         <a href="org-profile.php"><img src="images/person2.png" class="sidebar-icon"> Profile</a>
         <a href="#"><img src="images/analytics.png" class="sidebar-icon"> Analytics</a>
@@ -38,15 +54,15 @@
         <div class="container nav-container">
             <a href="#"><img src="images/logo.png" alt="Suni Logo" style="display:none;"></a>
             <ul>
-                <li><a href="#">+ Create Events</a></li>
+                <li><a href="create-events.php">+ Create Events</a></li>
                 <li><a href="index.php">CvSU Events</a></li>
                 <li><a href="#">My Profile</a></li>
-                <li><a href="#" class="active">Organization Dashboard</a></li>
+                <li><a href="dashboard.php" class="active">Organization Dashboard</a></li>
                 <li class="nav-icons">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <i class="fa-regular fa-bell fa-lg"></i>
                 </li>
-                <li><img src="images/sid.png" class="profile"></li>
+                <li><img src="<?php echo $profile_picture; ?>" class="profile"></li>
             </ul>
         </div>
     </nav>
@@ -57,9 +73,9 @@
       <p class="page-subtitle">Update your event details and settings.</p>
 
       <div class="content-tabs">
-        <a href="manage-events.html" class="tab-item">Details</a>
-        <a href="manage-events-banner.html" class="tab-item">Banner</a>
-        <a href="manage-events-guest.html" class="tab-item active">Guest</a>
+        <a href="manage-events.php" class="tab-item">Details</a>
+        <a href="manage-events-banner.php" class="tab-item">Banner</a>
+        <a href="manage-events-guest.php" class="tab-item active">Guest</a>
         <a href="#" class="tab-item">Registration</a>
       </div>
 

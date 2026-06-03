@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error_msg = "Invalid email. Please use your official @cvsu.edu.ph account.";
         } else {
             // Check your database table to see if this email exists
-            $stmt = $conn->prepare("SELECT id, first_name FROM users WHERE email = ? AND role != 'guest'");
+            $stmt = $conn->prepare("SELECT id, first_name FROM users WHERE email = ? AND account_type != 'guest'");
             $stmt->bind_param("s", $email);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -65,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           <img src="images/logo.png" alt="Suni Logo">
           </a>
           <ul>
-               <li><a href="#" class="active">CvSU Events</a></li>
+               <li><a href="index.php" class="active">CvSU Events</a></li>
                <li><button class="nav-btn" onclick="window.location.href='sign-in.php'">Sign in</button></li>
           </ul>
      </nav>

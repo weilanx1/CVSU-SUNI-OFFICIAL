@@ -20,17 +20,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $passwordError = 'Please enter your password.';
         $passwordClass = 'input-error-border';
     } else {
-        $stmt = $conn->prepare('SELECT id, first_name, password_hash FROM users WHERE email = ? AND role != "guest" LIMIT 1');
+        // Use new schema: `password` column and `account_type` field
+        $stmt = $conn->prepare('SELECT id, first_name, password, account_type FROM users WHERE email = ? AND account_type = "cvsu" LIMIT 1');
         $stmt->bind_param('s', $email);
         $stmt->execute();
         $result = $stmt->get_result();
         $user = $result->fetch_assoc();
 
-        if ($user && password_verify($password, $user['password_hash'])) {
+        if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['email'] = $email;
             $_SESSION['first_name'] = $user['first_name'];
             $_SESSION['role'] = 'cvsu';
+            
+            // Check if user is a main admin or organization admin/moderator
+            $_SESSION['is_admin'] = false;
+            $_SESSION['admin_role'] = null;
+            
+            // Check if user is a main admin of any organization
+            $admin_check = $conn->prepare('SELECT id FROM organizations WHERE main_admin_id = ? LIMIT 1');
+            $admin_check->bind_param('i', $user['id']);
+            $admin_check->execute();
+            $admin_check->store_result();
+            
+            if ($admin_check->num_rows > 0) {
+                $_SESSION['is_admin'] = true;
+                $_SESSION['admin_role'] = 'main_admin';
+            } else {
+                // Check if user is an organization admin or moderator
+                $org_admin_check = $conn->prepare('SELECT role FROM organization_admins WHERE user_id = ? LIMIT 1');
+                $org_admin_check->bind_param('i', $user['id']);
+                $org_admin_check->execute();
+                $org_result = $org_admin_check->get_result();
+                
+                if ($org_result->num_rows > 0) {
+                    $org_admin = $org_result->fetch_assoc();
+                    $_SESSION['is_admin'] = true;
+                    $_SESSION['admin_role'] = $org_admin['role']; // 'admin' or 'moderator'
+                }
+            }
+            
             header('Location: index.php');
             exit();
         }

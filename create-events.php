@@ -1,3 +1,19 @@
+<?php
+session_start();
+require_once 'db.php';
+
+$profile_picture = 'images/person3.png';
+if (isset($_SESSION['user_id'])) {
+    $stmt = $conn->prepare('SELECT profile_picture FROM users WHERE id = ? LIMIT 1');
+    $stmt->bind_param('i', $_SESSION['user_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    if ($user && !empty($user['profile_picture'])) {
+        $profile_picture = htmlspecialchars($user['profile_picture']);
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,13 +36,13 @@
             <ul>
                 <li><a href="#" class="active">+ Create Events</a></li>
                 <li><a href="index.php">CvSU Events</a></li>
-                <li><a href="#">My Profile</a></li>
-                <li><a href="#">Organization Dashboard</a></li>
+                <li><a href="org-profile.php">My Profile</a></li>
+                <li><a href="dashboard.php">Organization Dashboard</a></li>
                 <li class="nav-icons">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <i class="fa-regular fa-bell fa-lg"></i>
                 </li>
-                <li><img src="images/sid.png" class="profile"></li>
+                <li><img src="<?php echo $profile_picture; ?>" class="profile"></li>
             </ul>
         </div>
     </nav>

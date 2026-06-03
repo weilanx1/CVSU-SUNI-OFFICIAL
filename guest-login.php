@@ -15,17 +15,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($email === '' || $password === '') {
         $error_msg = 'Please enter both email and password.';
     } else {
-        $stmt = $conn->prepare('SELECT id, first_name, password_hash FROM users WHERE email = ? AND role = "guest" LIMIT 1');
+        // Use new schema: `password` column and `account_type` = 'guest'
+        $stmt = $conn->prepare('SELECT id, first_name, password, account_type FROM users WHERE email = ? AND account_type = "guest" LIMIT 1');
         $stmt->bind_param('s', $email);
         $stmt->execute();
         $result = $stmt->get_result();
         $user = $result->fetch_assoc();
 
-        if ($user && password_verify($password, $user['password_hash'])) {
+        if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['email'] = $email;
             $_SESSION['first_name'] = $user['first_name'];
             $_SESSION['role'] = 'guest';
+            
+            // Guests typically won't be admins, but set to false for consistency
+            $_SESSION['is_admin'] = false;
+            $_SESSION['admin_role'] = null;
+            
             header('Location: index.php');
             exit();
         }

@@ -1,3 +1,19 @@
+<?php
+session_start();
+require_once 'db.php';
+
+$profile_picture = 'images/person3.png';
+if (isset($_SESSION['user_id'])) {
+    $stmt = $conn->prepare('SELECT profile_picture FROM users WHERE id = ? LIMIT 1');
+    $stmt->bind_param('i', $_SESSION['user_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    if ($user && !empty($user['profile_picture'])) {
+        $profile_picture = htmlspecialchars($user['profile_picture']);
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,14 +33,14 @@
         <nav>
          <img src="images/logosss.png" alt="Suni Logo">
            <ul>
-               <li><a href="host-events.html">+ Create Event</a></li>
-               <li><a href="#" class="active">CvSU Events</a></li>
+               <li><a href="create-events.php">+ Create Event</a></li>
+               <li><a href="index.php" class="active">CvSU Events</a></li>
                 <div class="nav-icons">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <i class="fa-regular fa-bell"></i>
                 
             </div>
-               <li><button class="nav-btn" onclick="window.location.href='sign-in.html'">Sign in</button></li>
+               <li><button class="nav-btn" onclick="window.location.href='sign-in.php'">Sign in</button></li>
           </ul>
         </nav>
         <div class="overlay"></div>
@@ -108,7 +124,7 @@
                 <h2>REGISTRATION TICKET</h2>
 
                 <div class="ticket-profile">
-                    <img src="images/sid.png">
+                    <img src="<?php echo $profile_picture ?? 'images/person3.png'; ?>">
 
                     <div>
                         <h3>Xeed Love L. Magtira</h3>

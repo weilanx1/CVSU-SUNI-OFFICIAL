@@ -13,7 +13,7 @@
           <img src="images/logo.png" alt="Suni Logo">
           </a>
           <ul> 
-               <li><a href="#" class="active">CvSU Events</a></li>
+               <li><a href="index.php" class="active">CvSU Events</a></li>
                <li><a href="#" class="active">My Events</a></li>
                <li><button class="search-btn">
                 <img src="images/search_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="search" aria-hidden="true" style="width: 20px;">
@@ -21,7 +21,7 @@
                <li><button class="search-btn">
                 <img src="images/search_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg" alt="search" aria-hidden="true" style="width: 20px;">
                </button></li>
-               <li><button class="nav-btn" onclick="window.location.href='sign-in.html'">Sign in</button></li>
+               <li><button class="nav-btn" onclick="window.location.href='sign-in.php'">Sign in</button></li>
           </ul>
      </nav>
 

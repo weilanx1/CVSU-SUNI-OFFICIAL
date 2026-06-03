@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head> 
 <body> 
-    <a href="sign-in.html" id="login">
+    <a href="sign-in.php" id="login">
         Sign In
     </a>
     <div id="content">
@@ -24,10 +24,10 @@
     <img src="images/Landing Page (1).png" alt="side-logo">
 
     <div id="buttons">
-    <a href="cVsu-events.html" id="explore">
+    <a href="index.php" id="explore">
     Explore Cvsu Events
     </a>
-    <a href="host-events.html"  id="host">
+    <a href="host-events.php"  id="host">
     Explore Cvsu Events >
     </a>
     </div>

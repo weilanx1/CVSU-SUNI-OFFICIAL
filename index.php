@@ -1,3 +1,23 @@
+<?php
+session_start();
+require_once 'db.php';
+
+$is_admin = $_SESSION['is_admin'] ?? false;
+$profile_picture = 'images/person3.png'; // Default profile picture
+
+// Fetch user's profile picture if logged in
+if (isset($_SESSION['user_id'])) {
+    $stmt = $conn->prepare('SELECT profile_picture FROM users WHERE id = ? LIMIT 1');
+    $stmt->bind_param('i', $_SESSION['user_id']);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    
+    if ($user && !empty($user['profile_picture'])) {
+        $profile_picture = htmlspecialchars($user['profile_picture']);
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,15 +39,19 @@
           <img src="images/logo.png" alt="Suni Logo">
           </a>
           <ul>
+                <?php if ($is_admin): ?>
                 <li><a href="create-events.php">+ Create Event</a></li>
-                <li><a href="#" class="active">CvSU Events</a></li>
+                <?php endif; ?>
+                <li><a href="index.php" class="active">CvSU Events</a></li>
                 <li><a href="#">My Profile</a></li>
+                <?php if ($is_admin): ?>
                 <li><a href="dashboard.php">Organization Dashboard</a></li>
+                <?php endif; ?>
                 <li class="nav-icons">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <i class="fa-regular fa-bell fa-lg"></i>
                 </li>
-                <li><img src="images/sid.png" class="profile" alt="Profile"></li>
+                <li><img src="<?php echo $profile_picture; ?>" class="profile" alt="Profile"></li>
           </ul>
      </nav>
 

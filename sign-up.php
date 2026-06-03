@@ -10,14 +10,25 @@ if (!isset($_SESSION['temp_email'])) {
 $email = $_SESSION['temp_email'];
 $error_msg = '';
 
+// Fetch departments for the college dropdown
+$departments = [];
+$dept_stmt = $conn->prepare('SELECT id, code, name FROM departments ORDER BY name');
+if ($dept_stmt) {
+    $dept_stmt->execute();
+    $dept_result = $dept_stmt->get_result();
+    while ($row = $dept_result->fetch_assoc()) {
+        $departments[] = $row;
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $first_name = trim($_POST['first_name'] ?? '');
     $last_name = trim($_POST['last_name'] ?? '');
-    $college = trim($_POST['college'] ?? '');
+    $department_id = intval($_POST['department_id'] ?? 0);
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirmPassword'] ?? '';
 
-    if ($first_name === '' || $last_name === '' || $college === '' || $password === '' || $confirmPassword === '') {
+    if ($first_name === '' || $last_name === '' || $department_id <= 0 || $password === '' || $confirmPassword === '') {
         $error_msg = 'Please fill out all required fields.';
     } elseif (strlen($password) < 8) {
         $error_msg = 'Password must be at least 8 characters.';
@@ -33,14 +44,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error_msg = 'This CvSU account already exists. Please sign in instead.';
         } else {
             $password_hash = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $conn->prepare('INSERT INTO users (first_name, last_name, email, college, password_hash, role, created_at) VALUES (?, ?, ?, ?, ?, "cvsu", NOW())');
-            $stmt->bind_param('sssss', $first_name, $last_name, $email, $college, $password_hash);
+            $stmt = $conn->prepare('INSERT INTO users (first_name, last_name, email, password, account_type, department_id, created_at) VALUES (?, ?, ?, ?, "cvsu", ?, NOW())');
+            $stmt->bind_param('ssssi', $first_name, $last_name, $email, $password_hash, $department_id);
 
             if ($stmt->execute()) {
                 $_SESSION['user_id'] = $conn->insert_id;
                 $_SESSION['email'] = $email;
                 $_SESSION['first_name'] = $first_name;
                 $_SESSION['role'] = 'cvsu';
+                $_SESSION['is_admin'] = false;
+                $_SESSION['admin_role'] = null;
                 header('Location: index.php');
                 exit();
             } else {
@@ -115,18 +128,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <svg class="arrow-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                     </div>
                     <ul class="dropdown-list">
-                        <li data-value="CAFENR">College of Agriculture, Food, Environment, and Natural Resources</li>
-                        <li data-value="CAS">College of Arts and Sciences</li>
-                        <li data-value="CCJ">College of Criminal Justice</li>
-                        <li data-value="CEd">College of Education</li>
-                        <li data-value="CEIT">College of Engineering and Information Technology</li>                        
-                        <li data-value="CEMDS">College of Economics, Management, and Development Studies</li>
-                        <li data-value="CON">College of Nursing</li>  
-                        <li data-value="CTHM">College of Tourism and Hospitality Management</li>
-                        <li data-value="CSPEAR">College of Sports, Physical Education, and Recreation</li>
-                        <li data-value="CVMBS">College of Veterinary Medicine and Biomedical Sciences</li>                                                                
+                        <?php foreach ($departments as $d): ?>
+                            <li data-value="<?php echo $d['id']; ?>"><?php echo htmlspecialchars($d['name']); ?></li>
+                        <?php endforeach; ?>
                     </ul>
-                    <input type="hidden" name="college" id="deptInput" required>
+                    <input type="hidden" name="department_id" id="deptInput" required>
                 </div>
             </div>
 

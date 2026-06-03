@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error_msg = 'This email is already registered. Please login instead.';
         } else {
             $password_hash = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $conn->prepare('INSERT INTO users (first_name, last_name, email, password_hash, role, created_at) VALUES (?, ?, ?, ?, "guest", NOW())');
+            $stmt = $conn->prepare('INSERT INTO users (first_name, last_name, email, password, account_type, created_at) VALUES (?, ?, ?, ?, "guest", NOW())');
             $stmt->bind_param('ssss', $first_name, $last_name, $email, $password_hash);
 
             if ($stmt->execute()) {
@@ -37,6 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['email'] = $email;
                 $_SESSION['first_name'] = $first_name;
                 $_SESSION['role'] = 'guest';
+                $_SESSION['is_admin'] = false;
+                $_SESSION['admin_role'] = null;
                 header('Location: index.php');
                 exit();
             } else {

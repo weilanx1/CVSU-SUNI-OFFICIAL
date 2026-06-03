@@ -1,3 +1,121 @@
+<?php
+session_start();
+require_once 'db.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header('Location: sign-in.php');
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
+$profile_picture = 'images/person3.png';
+$organization = null;
+$department_name = '';
+$error_msg = '';
+$success_msg = '';
+
+// Fetch user profile picture
+$stmt = $conn->prepare('SELECT profile_picture FROM users WHERE id = ? LIMIT 1');
+$stmt->bind_param('i', $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+if ($user && !empty($user['profile_picture'])) {
+    $profile_picture = htmlspecialchars($user['profile_picture']);
+}
+
+// Fetch organization where user is main_admin or admin (NOT moderator)
+$org_stmt = $conn->prepare('
+    SELECT o.id, o.name, o.logo, o.department_id, d.name as dept_name, o.main_admin_id 
+    FROM organizations o
+    JOIN departments d ON o.department_id = d.id
+    WHERE o.main_admin_id = ? 
+    LIMIT 1
+');
+$org_stmt->bind_param('i', $user_id);
+$org_stmt->execute();
+$org_result = $org_stmt->get_result();
+
+if ($org_result->num_rows == 0) {
+    // Check if user is an admin (not moderator)
+    $admin_stmt = $conn->prepare('
+        SELECT o.id, o.name, o.logo, o.department_id, d.name as dept_name, o.main_admin_id, oa.role
+        FROM organizations o
+        JOIN organization_admins oa ON o.id = oa.organization_id
+        JOIN departments d ON o.department_id = d.id
+        WHERE oa.user_id = ? AND oa.role = "admin"
+        LIMIT 1
+    ');
+    $admin_stmt->bind_param('i', $user_id);
+    $admin_stmt->execute();
+    $admin_result = $admin_stmt->get_result();
+    
+    if ($admin_result->num_rows > 0) {
+        $organization = $admin_result->fetch_assoc();
+    } else {
+        $error_msg = 'You do not have permission to view this page. Only organization admins can access this.';
+    }
+} else {
+    $organization = $org_result->fetch_assoc();
+}
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $organization) {
+    $org_id = $organization['id'];
+    $org_name = trim($_POST['organization_name'] ?? '');
+    $logo_path = $organization['logo']; // Keep existing logo by default
+    
+    // Validate organization name
+    if (empty($org_name)) {
+        $error_msg = 'Organization name cannot be empty.';
+    } else {
+        // Handle logo upload if provided
+        if (isset($_FILES['org_logo']) && $_FILES['org_logo']['size'] > 0) {
+            $file = $_FILES['org_logo'];
+            $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            
+            if (!in_array($file['type'], $allowed_types)) {
+                $error_msg = 'Invalid file type. Only image files are allowed.';
+            } elseif ($file['size'] > 5000000) { // 5MB limit
+                $error_msg = 'File size exceeds 5MB limit.';
+            } else {
+                $upload_dir = 'images/org-logos/';
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0755, true);
+                }
+                
+                $file_name = 'org_' . $org_id . '_' . time() . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
+                $file_path = $upload_dir . $file_name;
+                
+                if (move_uploaded_file($file['tmp_name'], $file_path)) {
+                    $logo_path = $file_path;
+                } else {
+                    $error_msg = 'Failed to upload image.';
+                }
+            }
+        }
+        
+        // Update organization in database
+        if (empty($error_msg)) {
+            $update_stmt = $conn->prepare('UPDATE organizations SET name = ?, logo = ? WHERE id = ?');
+            $update_stmt->bind_param('ssi', $org_name, $logo_path, $org_id);
+            
+            if ($update_stmt->execute()) {
+                $success_msg = 'Organization profile updated successfully!';
+                $organization['name'] = $org_name;
+                $organization['logo'] = $logo_path;
+            } else {
+                $error_msg = 'Failed to update organization.';
+            }
+        }
+    }
+}
+
+$org_logo = ($organization && !empty($organization['logo'])) ? htmlspecialchars($organization['logo']) : 'images/person3.png';
+$org_name = $organization ? htmlspecialchars($organization['name']) : '';
+$dept_name = $organization ? htmlspecialchars($organization['dept_name']) : '';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,7 +139,7 @@
       <div class="menu">
         <img src="images/logo.png" class="sidebar-logo">
         
-        <a href="#">
+        <a href="dashboard.php">
           <img src="images/dashboard.png" class="sidebar-icon">
           Dashboard
         </a>
@@ -68,15 +186,15 @@
                 <img src="images/logo.png" alt="Suni Logo" style="display:none;">
             </a>
             <ul>
-                <li><a href="#">+ Create Events</a></li>
+                <li><a href="create-events.php">+ Create Events</a></li>
                 <li><a href="index.php">CvSU Events</a></li>
-                <li><a href="#">My Profile</a></li>
-                <li><a href="#" class="active">Organization Dashboard</a></li>
+                <li><a href="org-profile.php">My Profile</a></li>
+                <li><a href="dashboard.php" class="active">Organization Dashboard</a></li>
                 <li class="nav-icons">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <i class="fa-regular fa-bell fa-lg"></i>
                 </li>
-                <li><img src="images/sid.png" class="profile"></li>
+                <li><img src="<?php echo $profile_picture; ?>" class="profile"></li>
             </ul>
         </div>
     </nav>
@@ -91,16 +209,29 @@
           </div>
         </header>
 
+        <?php if (!empty($error_msg)): ?>
+          <div style="background-color: #fee; color: #c33; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+            <?php echo htmlspecialchars($error_msg); ?>
+          </div>
+        <?php endif; ?>
+
+        <?php if (!empty($success_msg)): ?>
+          <div style="background-color: #efe; color: #3c3; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+            <?php echo htmlspecialchars($success_msg); ?>
+          </div>
+        <?php endif; ?>
+
+        <?php if ($organization): ?>
         <section class="profile-form-section">
           <h2 class="form-section-title">Profile</h2>
           
-          <form id="orgProfileForm" action="" method="POST" enctype="multipart/form-data">
+          <form id="orgProfileForm" method="POST" enctype="multipart/form-data">
             
             <div class="form-group">
               <label class="input-label">Organization Profile Picture</label>
               <div class="avatar-uploader">
                 <div class="avatar-display">
-                  <img id="profileDisplayImage" src="images/logocsg.png" alt="Organization Logo">
+                  <img id="profileDisplayImage" src="<?php echo $org_logo; ?>" alt="Organization Logo">
                 </div>
                 <label for="imageUploadInput" class="avatar-upload-badge" title="Upload Image">
                   <i class="fa-solid fa-arrow-up"></i>
@@ -116,14 +247,14 @@
                 id="organizationName" 
                 name="organization_name" 
                 class="form-text-input" 
-                value="Central Student Government" 
+                value="<?php echo $org_name; ?>" 
                 required
               >
             </div>
 
             <div class="form-group">
               <label class="input-label">College Department</label>
-              <p class="form-static-value">Office of Student Affairs and Services</p>
+              <p class="form-static-value"><?php echo $dept_name; ?></p>
             </div>
 
             <div class="form-submit-row">
@@ -132,10 +263,15 @@
               </button>
             </div>
             
-            <p class="form-system-notice">Changes to your name or profile picture are applied across SUNI.</p>
+            <p class="form-system-notice">Changes to your organization name or profile picture are applied across SUNI.</p>
 
           </form>
         </section>
+        <?php else: ?>
+        <div style="padding: 20px; text-align: center; color: #666;">
+          <p><?php echo htmlspecialchars($error_msg); ?></p>
+        </div>
+        <?php endif; ?>
 
       </div>
     </div>
