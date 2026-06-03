@@ -84,9 +84,9 @@ if (isset($_SESSION['user_id'])) {
                 <img src="images/logo.png" alt="Suni Logo" style="display:none;">
             </a>
             <ul>
-                <li><a href="create-events.php">+ Create Events</a></li>
+                <li><a href="create-events.php">+ Create Event</a></li>
                 <li><a href="index.php">CvSU Events</a></li>
-                <li><a href="org-profile.php">My Profile</a></li>
+                <li><a href="Myprofile.php">My Profile</a></li>
                 <li><a href="dashboard.php" class="active">Organization Dashboard</a></li>
                 <li class="nav-icons">
                     <i class="fa-solid fa-magnifying-glass"></i>

@@ -43,7 +43,7 @@ if (isset($_SESSION['user_id'])) {
                 <li><a href="create-events.php">+ Create Event</a></li>
                 <?php endif; ?>
                 <li><a href="index.php" class="active">CvSU Events</a></li>
-                <li><a href="#">My Profile</a></li>
+                <li><a href="Myprofile.php">My Profile</a></li>
                 <?php if ($is_admin): ?>
                 <li><a href="dashboard.php">Organization Dashboard</a></li>
                 <?php endif; ?>
