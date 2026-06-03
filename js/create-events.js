@@ -100,61 +100,64 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    document.querySelectorAll('.visibility-option').forEach(option => {
-        option.addEventListener('click', function (e) {
-            e.stopPropagation();
-            const val = this.getAttribute('data-value');
-            
-            if (val === 'Public') {
-                visibilityValue.textContent = '🌐 Public';
-                hiddenType.value = 'public';
-            } else if (val === 'Department Only') {
-                visibilityValue.textContent = '🏢 Department Only';
-                hiddenType.value = 'department_only';
-            }
-            
-            document.querySelectorAll('.dept-cb').forEach(cb => cb.checked = false);
-            if (hiddenDepts) hiddenDepts.value = '';
-            
-            if(deptChecklist) deptChecklist.style.display = 'none';
-            if(filterDeptOption) filterDeptOption.classList.remove('open');
-            visibilityPanel.style.display = 'none';
-            visibilityTrigger.classList.remove('active');
-        });
-    });
+    // only wire visibility handlers when expected UI exists (prevents errors on pages using inline variants)
+    if (visibilityTrigger && visibilityPanel && visibilityValue && hiddenType && hiddenDepts) {
+        document.querySelectorAll('.visibility-option').forEach(option => {
+            option.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const val = this.getAttribute('data-value');
 
-    if (filterDeptOption) {
-        filterDeptOption.addEventListener('click', function (e) {
-            e.stopPropagation();
-            this.classList.toggle('open');
-            if (deptChecklist) {
-                const isVisible = deptChecklist.style.display === 'block';
-                deptChecklist.style.display = isVisible ? 'none' : 'block';
-            }
+                if (val === 'Public') {
+                    visibilityValue.textContent = '🌐 Public';
+                    hiddenType.value = 'public';
+                } else if (val === 'Department Only') {
+                    visibilityValue.textContent = '🏢 Department Only';
+                    hiddenType.value = 'department_only';
+                }
+
+                document.querySelectorAll('.dept-cb').forEach(cb => cb.checked = false);
+                if (hiddenDepts) hiddenDepts.value = '';
+
+                if(deptChecklist) deptChecklist.style.display = 'none';
+                if(filterDeptOption) filterDeptOption.classList.remove('open');
+                visibilityPanel.style.display = 'none';
+                visibilityTrigger.classList.remove('active');
+            });
+        });
+
+        if (filterDeptOption) {
+            filterDeptOption.addEventListener('click', function (e) {
+                e.stopPropagation();
+                this.classList.toggle('open');
+                if (deptChecklist) {
+                    const isVisible = deptChecklist.style.display === 'block';
+                    deptChecklist.style.display = isVisible ? 'none' : 'block';
+                }
+            });
+        }
+
+        document.querySelectorAll('.dept-cb').forEach(cb => {
+            cb.addEventListener('click', function(e) {
+                e.stopPropagation(); 
+            });
+            
+            cb.addEventListener('change', function () {
+                const checkedBoxes = document.querySelectorAll('.dept-cb:checked');
+                if (checkedBoxes.length === 0) {
+                    visibilityValue.textContent = '🌐 Public';
+                    hiddenType.value = 'public';
+                    hiddenDepts.value = '';
+                } else {
+                    const selectedIds = Array.from(checkedBoxes).map(item => item.value);
+                    const selectedCodes = Array.from(checkedBoxes).map(item => item.getAttribute('data-code'));
+                    
+                    visibilityValue.textContent = `🎯 Restricted: ${selectedCodes.join(', ')}`;
+                    hiddenType.value = 'restricted';
+                    hiddenDepts.value = selectedIds.join(',');
+                }
+            });
         });
     }
-
-    document.querySelectorAll('.dept-cb').forEach(cb => {
-        cb.addEventListener('click', function(e) {
-            e.stopPropagation(); 
-        });
-        
-        cb.addEventListener('change', function () {
-            const checkedBoxes = document.querySelectorAll('.dept-cb:checked');
-            if (checkedBoxes.length === 0) {
-                visibilityValue.textContent = '🌐 Public';
-                hiddenType.value = 'public';
-                hiddenDepts.value = '';
-            } else {
-                const selectedIds = Array.from(checkedBoxes).map(item => item.value);
-                const selectedCodes = Array.from(checkedBoxes).map(item => item.getAttribute('data-code'));
-                
-                visibilityValue.textContent = `🎯 Restricted: ${selectedCodes.join(', ')}`;
-                hiddenType.value = 'restricted';
-                hiddenDepts.value = selectedIds.join(',');
-            }
-        });
-    });
 
     // ==========================================================================
     // 4. LANDMARK SUGGESTIONS AUTOCOMPLETE (Restores Location Search UI)

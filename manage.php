@@ -100,115 +100,65 @@ if (isset($_SESSION['user_id'])) {
     <div class="title-row">
       <h1>Manage events</h1>
 
-      <a href="#" class="create-event">+ Create Event</a>
+      <a href="create-events.php" class="create-event">+ Create Event</a>
     </div>
     <div class="divider"></div>
     <div class="events">
-      <div class="event-card">
+    <?php
+    // Determine organization for current user (main admin or org admin)
+    $org_id = null;
+    if (isset($_SESSION['user_id'])) {
+        $uid = $_SESSION['user_id'];
+        $q = "SELECT o.id FROM organizations o WHERE o.main_admin_id = ? UNION SELECT o.id FROM organization_admins oa JOIN organizations o ON oa.organization_id = o.id WHERE oa.user_id = ? LIMIT 1";
+        $s = $conn->prepare($q);
+        $s->bind_param('ii', $uid, $uid);
+        $s->execute();
+        $r = $s->get_result();
+        if ($row = $r->fetch_assoc()) $org_id = $row['id'];
+    }
 
-        <div class="status">
-          Active ●
-        </div>
-        <div class="event-img">
-          <img src="images/stardew.png" alt="">
-        </div>
+    if (!$org_id) {
+        echo '<p>No organization found for your account.</p>';
+    } else {
+        $stmt = $conn->prepare('SELECT e.* FROM events e WHERE e.organization_id = ? ORDER BY e.created_at DESC');
+        $stmt->bind_param('i', $org_id);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        while ($ev = $res->fetch_assoc()) {
+            $eid = $ev['id'];
+            $title = htmlspecialchars($ev['title']);
+            $desc = htmlspecialchars($ev['description']);
+            $banner = !empty($ev['event_banner']) ? htmlspecialchars($ev['event_banner']) : 'images/stardew.png';
+            $venue = htmlspecialchars($ev['venue']);
+            $start = new DateTime($ev['start_datetime']);
+            $end = new DateTime($ev['end_datetime']);
+            $dateStr = $start->format('F j, Y');
+            $timeStr = $start->format('g:i A') . ' – ' . $end->format('g:i A');
+            // registrations count
+            $cstmt = $conn->prepare('SELECT COUNT(*) AS cnt FROM registrations WHERE event_id = ?');
+            $cstmt->bind_param('i', $eid);
+            $cstmt->execute();
+            $cres = $cstmt->get_result()->fetch_assoc();
+            $registered = intval($cres['cnt']);
 
-        <div class="event-content">
-
-          <h2>Hydrofest</h2>
-
-          <p class="description">
-            The best for HydroFest—an ultimate water fight experience!
-            Grab your friends, get your team, and prepare for nonstop
-            good vibes.
-          </p>
-
-          <div class="details">
-
-            <div class="detail">
-              <img src="images/calendar.png" class="btnIcon">
-              April 25, 2026
-            </div>
-
-            <div class="detail">
-              <img src="images/clock.png" class="btnIcon">
-              5:00 PM – 10:00 PM
-            </div>
-
-            <div class="detail">
-              <img src="images/location.png" class="btnIcon">
-              CvSU – University Oval
-            </div>
-
-            <div class="detail">
-              <img src="images/register.png" class="btnIcon">
-              128 Registered
-            </div>
-
-          </div>
-
-          <div class="card-buttons">
-
-            <a href="#" class="view-btn">
-              <img src="images/openview.png" alt="" class="btn-icon">
-              View Event Page
-            </a>
-
-            <a href="manage-events.php" class="manage-link">
-              <i class="fa-regular fa-pen-to-square"></i>
-              Manage Event
-            </a>
-
-          </div>
-
-        </div>
-
-      </div>
-      <div class="event-card">
-
-        <div class="status">
-          Active ●
-        </div>
-        <div class="event-img">
-          <img src="images/stardew.png" alt="">
-        </div>
-        <div class="event-content">
-          <h2>Hydrofest</h2>
-          <p class="description">
-            The best for HydroFest—an ultimate water fight experience!
-            Grab your friends, get your team, and prepare for nonstop
-            good vibes.
-          </p>
-          <div class="details">
-           <div class="detail">
-              <img src="images/calendar.png" class="btnIcon">
-              April 25, 2026
-            </div>
-            <div class="detail">
-              <img src="images/clock.png" class="btnIcon">
-              5:00 PM – 10:00 PM
-            </div>
-            <div class="detail">
-              <img src="images/location.png" class="btnIcon">
-              CvSU – University Oval
-            </div>
-            <div class="detail">
-              <img src="images/register.png" class="btnIcon">
-              128 Registered
-            </div>
-          </div>
-          <div class="card-buttons">
-            <a href="#" class="view-btn">
-              <img src="images/openview.png" alt="" class="btn-icon">
-              View Event Page
-            </a>
-            <a href="#" class="manage-link">
-              <i class="fa-regular fa-pen-to-square"></i>
-              Manage Event
-            </a>
-          </div>
-        </div>
-      </div>
+            echo '<div class="event-card">';
+            echo '<div class="event-img"><img src="' . $banner . '" alt=""></div>';
+            echo '<div class="event-content">';
+            echo '<h2>' . $title . '</h2>';
+            echo '<p class="description">' . $desc . '</p>';
+            echo '<div class="details">';
+            echo '<div class="detail"><img src="images/calendar.png" class="btnIcon">' . $dateStr . '</div>';
+            echo '<div class="detail"><img src="images/clock.png" class="btnIcon">' . $timeStr . '</div>';
+            echo '<div class="detail"><img src="images/location.png" class="btnIcon">' . $venue . '</div>';
+            echo '<div class="detail"><img src="images/register.png" class="btnIcon">' . $registered . ' Registered</div>';
+            echo '</div>';
+            echo '<div class="card-buttons">';
+            echo '<a href="eventpage.php?event_id=' . $eid . '" class="view-btn"><img src="images/openview.png" alt="" class="btn-icon">View Event Page</a>';
+            echo '<a href="manage-events.php?event_id=' . $eid . '" class="manage-link"><i class="fa-regular fa-pen-to-square"></i>Manage Event</a>';
+            echo '</div></div></div>';
+        }
+    }
+    ?>
     </div>
   </div>
 </body>

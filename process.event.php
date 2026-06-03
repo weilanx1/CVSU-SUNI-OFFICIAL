@@ -9,11 +9,28 @@ if (!isset($_SESSION['user_id'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $created_by = $_SESSION['user_id'];
-    $organization_id = !empty($_POST['organization_id']) ? intval($_POST['organization_id']) : null;
 
-    if (!$organization_id) {
+    $org_query = "SELECT o.id, o.department_id
+                  FROM organizations o
+                  WHERE o.main_admin_id = ?
+                  UNION
+                  SELECT o.id, o.department_id
+                  FROM organization_admins oa
+                  JOIN organizations o ON oa.organization_id = o.id
+                  WHERE oa.user_id = ?
+                  LIMIT 1";
+    $org_stmt = $conn->prepare($org_query);
+    $org_stmt->bind_param('ii', $created_by, $created_by);
+    $org_stmt->execute();
+    $org_res = $org_stmt->get_result();
+    $org_info = $org_res->fetch_assoc();
+
+    if (!$org_info) {
         die("Error: User account is not associated with an authorized active organization.");
     }
+
+    $organization_id = intval($org_info['id']);
+    $organization_department_id = intval($org_info['department_id']);
 
     // 2. Capture and Clean Form Data
     $title = isset($_POST['event_name']) ? trim($_POST['event_name']) : '';
@@ -22,6 +39,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $visibility = isset($_POST['visibility_type']) ? $_POST['visibility_type'] : 'public'; 
     $ticket_price = isset($_POST['ticket_price']) ? floatval($_POST['ticket_price']) : 0.00;
     $require_approval = isset($_POST['require_approval']) ? 1 : 0;
+    $selected_departments = isset($_POST['selected_departments']) ? trim($_POST['selected_departments']) : '';
+
+    if ($visibility === 'restricted' && $selected_departments === '') {
+        die('Error: Please select at least one department for restricted visibility.');
+    }
+    if ($visibility === 'department_only' && $organization_department_id <= 0) {
+        die('Error: Organization department not found for department_only visibility.');
+    }
 
     // Handle Capacity Values safely (Treating NULL cleanly for MySQL)
     $limit_capacity = isset($_POST['limit_capacity']) ? $_POST['limit_capacity'] : "0";
@@ -69,70 +94,87 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // 5. Execute Main Event Entry Injection
-    $sql = "INSERT INTO events (
-                organization_id, created_by, title, description, event_banner, 
-                cover_photo, venue, visibility, start_datetime, end_datetime, 
-                capacity, ticket_price, require_approval, status, created_at, updated_at
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+    // 5. Execute Main Event Entry Injection with transaction and NULL-capacity handling
+    $conn->begin_transaction();
+    try {
+        // sanitize visibility
+        $allowedVis = ['public','department_only','restricted'];
+        if (!in_array($visibility, $allowedVis)) $visibility = 'public';
 
-    $stmt = $conn->prepare($sql);
-    if (!$stmt) {
-        die("SQL Prepare Error: " . $conn->error);
-    }
+        if ($capacity === null) {
+            $sql = "INSERT INTO events (
+                        organization_id, created_by, title, description, event_banner,
+                        cover_photo, venue, visibility, start_datetime, end_datetime,
+                        capacity, ticket_price, require_approval, status, created_at, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, 'published', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
 
-    // Using type 'z' or passing variables carefully. Since capacity can be NULL, 
-    // we use a ternary check or bind it safely. MySQLi bind_param handles native PHP nulls well if the type matches.
-    $stmt->bind_param(
-        'iissssssssidi',
-        $organization_id, $created_by, $title, $description, $event_banner,
-        $cover_photo, $venue, $visibility, $start_datetime, $end_datetime,
-        $capacity, $ticket_price, $require_approval
-    );
+            $stmt = $conn->prepare($sql);
+            if (!$stmt) throw new Exception('SQL Prepare Error: ' . $conn->error);
 
-    if ($stmt->execute()) {
-        $event_id = $conn->insert_id;
-
-        // 6. Process Visibility Relational Mapping
-        if ($visibility === 'restricted' && !empty($_POST['selected_departments'])) {
-            $department_ids = explode(',', $_POST['selected_departments']);
-            $dep_sql = "INSERT INTO event_departments (event_id, department_id) VALUES (?, ?)";
-            $dep_stmt = $conn->prepare($dep_sql);
-
-            if ($dep_stmt) {
-                foreach ($department_ids as $dept_id) {
-                    $dept_id_int = intval($dept_id);
-                    $dep_stmt->bind_param('ii', $event_id, $dept_id_int);
-                    $dep_stmt->execute();
-                }
+            $types = 'iissssssssdi'; // org_id, created_by, title, desc, banner, cover, venue, visibility, start, end, ticket_price (d), require_approval (i)
+            if (!$stmt->bind_param($types,
+                $organization_id, $created_by, $title, $description, $event_banner,
+                $cover_photo, $venue, $visibility, $start_datetime, $end_datetime,
+                $ticket_price, $require_approval)) {
+                throw new Exception('Bind Param Failed: ' . $stmt->error);
             }
-        } 
-        elseif ($visibility === 'department_only') {
-            $dept_lookup = "SELECT department_id FROM organizations WHERE id = ? LIMIT 1";
-            $lookup_stmt = $conn->prepare($dept_lookup);
-            if ($lookup_stmt) {
-                $lookup_stmt->bind_param('i', $organization_id);
-                $lookup_stmt->execute();
-                $lookup_res = $lookup_stmt->get_result()->fetch_assoc();
+        } else {
+            $sql = "INSERT INTO events (
+                        organization_id, created_by, title, description, event_banner,
+                        cover_photo, venue, visibility, start_datetime, end_datetime,
+                        capacity, ticket_price, require_approval, status, created_at, updated_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
 
-                if ($lookup_res && !empty($lookup_res['department_id'])) {
-                    $org_dept_id = intval($lookup_res['department_id']);
-                    $dep_sql = "INSERT INTO event_departments (event_id, department_id) VALUES (?, ?)";
-                    $dep_stmt = $conn->prepare($dep_sql);
-                    if ($dep_stmt) {
-                        $dep_stmt->bind_param('ii', $event_id, $org_dept_id);
-                        $dep_stmt->execute();
-                    }
-                }
+            $stmt = $conn->prepare($sql);
+            if (!$stmt) throw new Exception('SQL Prepare Error: ' . $conn->error);
+
+            $types = 'iissssssssidi'; // org_id, created_by, title, desc, banner, cover, venue, visibility, start, end, capacity (i), ticket_price (d), require_approval (i)
+            if (!$stmt->bind_param($types,
+                $organization_id, $created_by, $title, $description, $event_banner,
+                $cover_photo, $venue, $visibility, $start_datetime, $end_datetime,
+                $capacity, $ticket_price, $require_approval)) {
+                throw new Exception('Bind Param Failed: ' . $stmt->error);
             }
         }
 
-        // Clean redirection
-        header("Location: dashboard.php?status=success");
+        if (!$stmt->execute()) {
+            throw new Exception('Execute Failed: ' . $stmt->error);
+        }
+
+        $event_id = $conn->insert_id;
+
+        // 6. Process Visibility Relational Mapping
+        if ($visibility === 'restricted') {
+            $department_ids = array_filter(array_map('intval', explode(',', $selected_departments)));
+            if (empty($department_ids)) {
+                throw new Exception('Restricted visibility requires selected departments.');
+            }
+            $dep_sql = "INSERT INTO event_departments (event_id, department_id) VALUES (?, ?)";
+            $dep_stmt = $conn->prepare($dep_sql);
+            if (!$dep_stmt) throw new Exception('Prepare event_departments failed: ' . $conn->error);
+            foreach ($department_ids as $dept_id) {
+                $dep_stmt->bind_param('ii', $event_id, $dept_id);
+                if (!$dep_stmt->execute()) throw new Exception('Insert event_departments failed: ' . $dep_stmt->error);
+            }
+        } elseif ($visibility === 'department_only') {
+            if ($organization_department_id > 0) {
+                $dep_sql = "INSERT INTO event_departments (event_id, department_id) VALUES (?, ?)";
+                $dep_stmt = $conn->prepare($dep_sql);
+                if (!$dep_stmt) throw new Exception('Prepare event_departments failed: ' . $conn->error);
+                $dep_stmt->bind_param('ii', $event_id, $organization_department_id);
+                if (!$dep_stmt->execute()) throw new Exception('Insert event_departments failed: ' . $dep_stmt->error);
+            }
+        }
+
+        $conn->commit();
+        header("Location: manage.php?created=1");
         exit;
-    } else {
-        // Output the precise database error preventing insertion
-        die("Database Execution Error: " . $stmt->error . " (Code: " . $stmt->errno . ")");
+
+    } catch (Exception $e) {
+        $conn->rollback();
+        // Log error and show a concise message
+        error_log('process.event.php error: ' . $e->getMessage());
+        die('An error occurred while creating the event. Check server logs.');
     }
 } else {
     die("Invalid Request Method.");

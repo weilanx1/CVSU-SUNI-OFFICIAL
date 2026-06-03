@@ -13,6 +13,82 @@ if (isset($_SESSION['user_id'])) {
         $profile_picture = htmlspecialchars($user['profile_picture']);
     }
 }
+// Determine user's organization and load event
+$org_id = null;
+$user_id = $_SESSION['user_id'] ?? null;
+if ($user_id) {
+  $oq = "SELECT o.id FROM organizations o WHERE o.main_admin_id = ? UNION SELECT o.id FROM organization_admins oa JOIN organizations o ON oa.organization_id = o.id WHERE oa.user_id = ? LIMIT 1";
+  $os = $conn->prepare($oq);
+  $os->bind_param('ii', $user_id, $user_id);
+  $os->execute();
+  $or = $os->get_result();
+  if ($row = $or->fetch_assoc()) $org_id = $row['id'];
+}
+
+$event = null;
+if (isset($_GET['event_id']) && $org_id) {
+  $eid = intval($_GET['event_id']);
+  $est = $conn->prepare('SELECT * FROM events WHERE id = ? AND organization_id = ? LIMIT 1');
+  $est->bind_param('ii', $eid, $org_id);
+  $est->execute();
+  $er = $est->get_result();
+  $event = $er->fetch_assoc();
+}
+
+// Handle uploads
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id']) && $org_id) {
+  $eid = intval($_POST['event_id']);
+  // verify
+  $vst = $conn->prepare('SELECT id FROM events WHERE id = ? AND organization_id = ? LIMIT 1');
+  $vst->bind_param('ii', $eid, $org_id);
+  $vst->execute();
+  $vres = $vst->get_result();
+  if (!$vres->fetch_assoc()) die('Unauthorized');
+
+  $target_dir = 'uploads/';
+  if (!is_dir($target_dir)) mkdir($target_dir, 0755, true);
+
+  $event_banner = null;
+  $cover_photo = null;
+
+  if (isset($_FILES['event_banner']) && $_FILES['event_banner']['error'] === UPLOAD_ERR_OK) {
+    $ext = pathinfo($_FILES['event_banner']['name'], PATHINFO_EXTENSION);
+    $fn = 'banner_' . uniqid() . '.' . $ext;
+    if (move_uploaded_file($_FILES['event_banner']['tmp_name'], $target_dir . $fn)) {
+      $event_banner = $target_dir . $fn;
+    }
+  }
+  if (isset($_FILES['cover_photo']) && $_FILES['cover_photo']['error'] === UPLOAD_ERR_OK) {
+    $ext = pathinfo($_FILES['cover_photo']['name'], PATHINFO_EXTENSION);
+    $fn = 'cover_' . uniqid() . '.' . $ext;
+    if (move_uploaded_file($_FILES['cover_photo']['tmp_name'], $target_dir . $fn)) {
+      $cover_photo = $target_dir . $fn;
+    }
+  }
+
+  if ($event_banner || $cover_photo) {
+    $parts = [];
+    $params = [];
+    $types = '';
+    if ($event_banner) { $parts[] = 'event_banner = ?'; $params[] = $event_banner; $types .= 's'; }
+    if ($cover_photo) { $parts[] = 'cover_photo = ?'; $params[] = $cover_photo; $types .= 's'; }
+    $sql = 'UPDATE events SET ' . implode(', ', $parts) . ', updated_at = CURRENT_TIMESTAMP WHERE id = ?';
+    $params[] = $eid; $types .= 'i';
+    $upd = $conn->prepare($sql);
+    $upd->bind_param($types, ...$params);
+    if ($upd->execute()) {
+      $upload_success = true;
+      // reload event so UI reflects new image paths
+      $est = $conn->prepare('SELECT * FROM events WHERE id = ? AND organization_id = ? LIMIT 1');
+      $est->bind_param('ii', $eid, $org_id);
+      $est->execute();
+      $er = $est->get_result();
+      $event = $er->fetch_assoc();
+    } else {
+      $upload_error = 'Failed to save images.';
+    }
+  }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -107,14 +183,20 @@ if (isset($_SESSION['user_id'])) {
 
     <!-- Sub-navigation tabs layout -->
     <div class="content-tabs">
-      <a href="manage-events.php" class="tab-item">Details</a>
-      <a href="manage-events-banner.php" class="tab-item active">Banner</a>
-      <a href="manage-events-guest.php" class="tab-item">Guest</a>
+      <a href="manage-events.php?event_id=<?php echo $event ? intval($event['id']) : ''; ?>" class="tab-item">Details</a>
+      <a href="manage-events-banner.php?event_id=<?php echo $event ? intval($event['id']) : ''; ?>" class="tab-item active">Banner</a>
+      <a href="manage-events-guest.php?event_id=<?php echo $event ? intval($event['id']) : ''; ?>" class="tab-item">Guest</a>
       <a href="#" class="tab-item">Registration</a>
     </div>
 
     <!-- Form container area ready for image upload operations -->
     <form action="" method="POST" enctype="multipart/form-data">
+      <?php if (!empty($upload_success)): ?>
+        <div style="background:#e6ffef; color:#044d22; padding:12px; border-radius:6px; margin-bottom:12px;">Images updated successfully.</div>
+      <?php endif; ?>
+      <?php if (!empty($upload_error)): ?>
+        <div style="background:#fff0f0; color:#8b1d1d; padding:12px; border-radius:6px; margin-bottom:12px;"><?php echo htmlspecialchars($upload_error); ?></div>
+      <?php endif; ?>
       <div class="manage-card">
         
         <div class="banner-grid">
@@ -126,15 +208,13 @@ if (isset($_SESSION['user_id'])) {
             
             <div class="image-preview-container">
               <!-- Default Image Preview Placeholder -->
-              <img src="images/stardew.png" alt="Event Thumbnail Grid Preview">
+              <img id="thumbPreview" src="<?php echo $event && !empty($event['event_banner']) ? htmlspecialchars($event['event_banner']) : 'images/stardew.png'; ?>" alt="Event Thumbnail Grid Preview">
               
               <!-- Action Buttons (Naka-iwan bilang handa para sa backend operations) -->
-              <button type="button" class="img-overlay-btn btn-delete-img" title="Remove Image">
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-              <button type="button" class="img-overlay-btn btn-edit-img" title="Change Image">
+              <label class="img-overlay-btn btn-edit-img" title="Change Image" style="cursor:pointer;">
+                <input type="file" name="event_banner" accept="image/*" style="display:none;" onchange="document.getElementById('thumbPreview').src = window.URL.createObjectURL(this.files[0])">
                 <i class="fa-solid fa-pen"></i>
-              </button>
+              </label>
             </div>
           </div>
 
@@ -145,15 +225,13 @@ if (isset($_SESSION['user_id'])) {
             
             <div class="image-preview-container">
               <!-- Default Widescreen Image Preview Placeholder -->
-              <img src="images/stardew.png" alt="Event Widescreen Cover Preview">
+              <img id="coverPreview" src="<?php echo $event && !empty($event['cover_photo']) ? htmlspecialchars($event['cover_photo']) : 'images/stardew.png'; ?>" alt="Event Widescreen Cover Preview">
               
               <!-- Action Buttons (Naka-iwan bilang handa para sa backend operations) -->
-              <button type="button" class="img-overlay-btn btn-delete-img" title="Remove Cover">
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-              <button type="button" class="img-overlay-btn btn-edit-img" title="Change Cover">
+              <label class="img-overlay-btn btn-edit-img" title="Change Cover" style="cursor:pointer;">
+                <input type="file" name="cover_photo" accept="image/*" style="display:none;" onchange="document.getElementById('coverPreview').src = window.URL.createObjectURL(this.files[0])">
                 <i class="fa-solid fa-pen"></i>
-              </button>
+              </label>
             </div>
           </div>
 
@@ -161,9 +239,10 @@ if (isset($_SESSION['user_id'])) {
 
       </div>
 
+      <input type="hidden" name="event_id" value="<?php echo $event ? intval($event['id']) : ''; ?>">
       <!-- Action Footer Buttons Layout Block -->
       <div class="form-actions">
-        <button type="button" class="btn btn-cancel">Cancel</button>
+        <a href="manage-events.php?event_id=<?php echo $event ? intval($event['id']) : ''; ?>" class="btn btn-cancel">Cancel</a>
         <button type="submit" class="btn btn-save">Save Changes</button>
       </div>
     </form>
