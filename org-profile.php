@@ -25,12 +25,12 @@ if ($user && !empty($user['profile_picture'])) {
     $profile_picture = htmlspecialchars($user['profile_picture']);
 }
 
-// Fetch organization where user is main_admin or admin (NOT moderator)
+// Fetch organization where user is main_admin or organization admin/moderator
 $org_stmt = $conn->prepare('
-    SELECT o.id, o.name, o.logo, o.department_id, d.name as dept_name, o.main_admin_id 
+    SELECT o.id, o.name, o.logo, o.department_id, d.name as dept_name, o.main_admin_id
     FROM organizations o
     JOIN departments d ON o.department_id = d.id
-    WHERE o.main_admin_id = ? 
+    WHERE o.main_admin_id = ?
     LIMIT 1
 ');
 $org_stmt->bind_param('i', $user_id);
@@ -38,13 +38,13 @@ $org_stmt->execute();
 $org_result = $org_stmt->get_result();
 
 if ($org_result->num_rows == 0) {
-    // Check if user is an admin (not moderator)
+    // Check if user is an organization admin or moderator
     $admin_stmt = $conn->prepare('
         SELECT o.id, o.name, o.logo, o.department_id, d.name as dept_name, o.main_admin_id, oa.role
         FROM organizations o
         JOIN organization_admins oa ON o.id = oa.organization_id
         JOIN departments d ON o.department_id = d.id
-        WHERE oa.user_id = ? AND oa.role = "admin"
+        WHERE oa.user_id = ? AND oa.role IN ("admin", "moderator")
         LIMIT 1
     ');
     $admin_stmt->bind_param('i', $user_id);
@@ -54,11 +54,13 @@ if ($org_result->num_rows == 0) {
     if ($admin_result->num_rows > 0) {
         $organization = $admin_result->fetch_assoc();
     } else {
-        $error_msg = 'You do not have permission to view this page. Only organization admins can access this.';
+        $error_msg = 'You do not have permission to view this page. Only organization admins or moderators can access this.';
     }
 } else {
     $organization = $org_result->fetch_assoc();
+    $organization['role'] = 'main_admin';
 }
+
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $organization) {
