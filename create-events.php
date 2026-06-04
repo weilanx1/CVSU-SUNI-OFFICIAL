@@ -4,7 +4,11 @@ require_once 'db.php';
 
 $is_admin = $_SESSION['is_admin'] ?? false;
 $user_id = $_SESSION['user_id'] ?? null;
-$profile_picture = 'images/person3.png'; // Default backup
+
+$default_avatar = 'images/person3.png';
+$default_logo = 'images/logocsg.png';
+
+$profile_picture = $default_avatar; // Default backup
 
 // Fetch user profile metrics
 if ($user_id) {
@@ -13,15 +17,22 @@ if ($user_id) {
     $stmt->execute();
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
-    if ($user && !empty($user['profile_picture'])) {
-        $profile_picture = htmlspecialchars($user['profile_picture']);
+    if ($user) {
+        $db_picture = trim($user['profile_picture'] ?? '');
+        if (!empty($db_picture) && strtolower($db_picture) !== 'null') {
+            if (file_exists($db_picture) && is_file($db_picture)) {
+                $profile_picture = htmlspecialchars($db_picture);
+            } else {
+                $profile_picture = $default_avatar;
+            }
+        }
     }
 }
 
 // 1. Identify which organization this user manages (Checks either main_admin_id or organization_admins role)
 $org_id = null;
 $org_name = "Unknown Organization";
-$org_logo = "images/logocsg.png";
+$org_logo = $default_logo;
 $org_dept_code = "General";
 
 if ($user_id) {
@@ -45,10 +56,16 @@ if ($user_id) {
     if ($my_org = $org_res->fetch_assoc()) {
         $org_id = $my_org['id'];
         $org_name = htmlspecialchars($my_org['name']);
-        if (!empty($my_org['logo'])) {
-            $org_logo = htmlspecialchars($my_org['logo']);
+        
+        $db_logo = trim($my_org['logo'] ?? '');
+        if (!empty($db_logo) && strtolower($db_logo) !== 'null') {
+            if (file_exists($db_logo) && is_file($db_logo)) {
+                $org_logo = htmlspecialchars($db_logo);
+            } else {
+                $org_logo = $default_logo;
+            }
         }
-        $org_dept_code = htmlspecialchars($my_org['dept_code']);
+        $org_dept_code = htmlspecialchars($my_org['dept_code'] ?? 'General');
     }
 }
 
@@ -100,7 +117,7 @@ if ($dept_res) {
     
     <form class="wrapper" method="POST" action="process-event.php" enctype="multipart/form-data">
         
-        <input type="hidden" name="organization_id" value="<?php echo $org_id; ?>">
+        <input type="hidden" name="organization_id" value="<?php echo htmlspecialchars($org_id ?? ''); ?>">
         <input type="hidden" name="visibility_type" id="hiddenVisibilityType" value="public">
         <input type="hidden" name="selected_departments" id="hiddenSelectedDepartments" value="">
 
@@ -137,7 +154,7 @@ if ($dept_res) {
                         <div class="dept-checklist" id="deptChecklist">
                             <?php foreach ($dept_list as $dept): ?>
                             <label class="checkbox-row">
-                                <input type="checkbox" value="<?php echo $dept['id']; ?>" data-code="<?php echo htmlspecialchars($dept['code']); ?>" class="dept-cb">
+                                <input type="checkbox" value="<?php echo htmlspecialchars($dept['id']); ?>" data-code="<?php echo htmlspecialchars($dept['code']); ?>" class="dept-cb">
                                 <span><?php echo htmlspecialchars($dept['code']); ?></span>
                             </label>
                             <?php endforeach; ?>
@@ -153,7 +170,7 @@ if ($dept_res) {
                     <h3>Event Image/Banner</h3>
                     <p>Upload or choose a banner for your event.</p>
                     <div class="img-box">
-                        <img src="images/stardew.png" class="display" id="eventBannerPreview">
+                        <img src="images/stardew.png" class="display" id="eventBannerPreview" alt="Event Banner">
                         <button type="button" class="img-add-btn" onclick="document.getElementById('event_banner_input').click();">➕</button>
                         <input type="file" name="event_banner" id="event_banner_input" accept="image/*" style="display:none;" onchange="previewImage(this, 'eventBannerPreview')">
                     </div>
@@ -162,7 +179,7 @@ if ($dept_res) {
                 <div class="left-section-group" style="margin-top: 15px;">
                     <h3>Cover Image/Banner</h3>
                     <div class="img-box">
-                        <img src="images/stardew.png" class="cover" id="coverPhotoPreview">
+                        <img src="images/stardew.png" class="cover" id="coverPhotoPreview" alt="Cover Photo">
                         <button type="button" class="img-add-btn" onclick="document.getElementById('cover_photo_input').click();">➕</button>
                         <input type="file" name="cover_photo" id="cover_photo_input" accept="image/*" style="display:none;" onchange="previewImage(this, 'coverPhotoPreview')">
                     </div>
@@ -237,9 +254,9 @@ if ($dept_res) {
                             <span>🎟 Ticket Price</span>
                         </div>
                         <div class="option-right" style="font-weight: 600; color: #034421;">
-                                    Free
-                                    <input type="hidden" name="ticket_price" value="0.00">
-                                </div>
+                            Free
+                            <input type="hidden" name="ticket_price" value="0.00">
+                        </div>
                     </div>
 
                     <div class="option-row">

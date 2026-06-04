@@ -9,7 +9,8 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $user_id = $_SESSION['user_id'];
-$profile_picture = 'images/person3.png';
+$default_avatar = 'images/person3.png';
+$profile_picture = $default_avatar;
 $organization = null;
 $department_name = '';
 $error_msg = '';
@@ -21,8 +22,15 @@ $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
+
 if ($user && !empty($user['profile_picture'])) {
-    $profile_picture = htmlspecialchars($user['profile_picture']);
+    $db_user_path = $user['profile_picture'];
+    // Defensive physical file check
+    if (file_exists($db_user_path) && is_file($db_user_path)) {
+        $profile_picture = htmlspecialchars($db_user_path);
+    } else {
+        $profile_picture = $default_avatar;
+    }
 }
 
 // Fetch organization where user is main_admin or organization admin/moderator
@@ -114,7 +122,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $organization) {
     }
 }
 
-$org_logo = ($organization && !empty($organization['logo'])) ? htmlspecialchars($organization['logo']) : 'images/person3.png';
+// Fallback logic for Organization Logo path validation
+$org_logo = $default_avatar;
+if ($organization && !empty($organization['logo'])) {
+    $db_logo_path = $organization['logo'];
+    if (file_exists($db_logo_path) && is_file($db_logo_path)) {
+        $org_logo = htmlspecialchars($db_logo_path);
+    }
+}
+
 $org_name = $organization ? htmlspecialchars($organization['name']) : '';
 $dept_name = $organization ? htmlspecialchars($organization['dept_name']) : '';
 ?>
@@ -196,7 +212,7 @@ $dept_name = $organization ? htmlspecialchars($organization['dept_name']) : '';
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <i class="fa-regular fa-bell fa-lg"></i>
                 </li>
-                <li><img src="<?php echo $profile_picture; ?>" class="profile"></li>
+                <li><img src="<?php echo $profile_picture; ?>" class="profile" alt="User Profile Image"></li>
             </ul>
         </div>
     </nav>

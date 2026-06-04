@@ -2,15 +2,24 @@
 session_start();
 require_once 'db.php';
 
-$profile_picture = 'images/person3.png';
+$default_avatar = 'images/person3.png';
+$profile_picture = $default_avatar;
+
 if (isset($_SESSION['user_id'])) {
     $stmt = $conn->prepare('SELECT profile_picture FROM users WHERE id = ? LIMIT 1');
     $stmt->bind_param('i', $_SESSION['user_id']);
     $stmt->execute();
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
+    
     if ($user && !empty($user['profile_picture'])) {
-        $profile_picture = htmlspecialchars($user['profile_picture']);
+        $db_path = $user['profile_picture'];
+        // Check if the file physically exists on the server disk
+        if (file_exists($db_path) && is_file($db_path)) {
+            $profile_picture = htmlspecialchars($db_path);
+        } else {
+            $profile_picture = $default_avatar;
+        }
     }
 }
 ?>
@@ -92,11 +101,10 @@ if (isset($_SESSION['user_id'])) {
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <i class="fa-regular fa-bell fa-lg"></i>
                 </li>
-                <li><img src="<?php echo $profile_picture; ?>" class="profile"></li>
+                <li><img src="<?php echo $profile_picture; ?>" class="profile" alt="Profile Layout Picture"></li>
             </ul>
         </div>
     </nav>
   </div>
-<body>
-
+</body>
 </html>

@@ -9,7 +9,11 @@ if (!isset($_SESSION['user_id'])) {
 
 $is_admin = $_SESSION['is_admin'] ?? false;
 $user_id = $_SESSION['user_id'];
-$profile_picture = 'images/person3.png';
+
+// Default Fallback Image Layout Config
+$default_avatar = 'images/person3.png';
+$profile_picture = $default_avatar;
+
 $user_full_name = 'My Profile';
 $user_department_name = 'College / Department not set';
 $user_bio = '';
@@ -19,6 +23,7 @@ $stmt->bind_param('i', $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
+
 if ($user) {
     $user_full_name = trim($user['first_name'] . ' ' . $user['last_name']);
     if (empty($user_full_name)) {
@@ -27,9 +32,17 @@ if ($user) {
     if (!empty($user['department_name'])) {
         $user_department_name = $user['department_name'];
     }
+    
+    // Check if the file path exists in DB AND physically exists on the disk
     if (!empty($user['profile_picture'])) {
-        $profile_picture = htmlspecialchars($user['profile_picture']);
+        $db_path = $user['profile_picture'];
+        if (file_exists($db_path) && is_file($db_path)) {
+            $profile_picture = htmlspecialchars($db_path);
+        } else {
+            $profile_picture = $default_avatar;
+        }
     }
+    
     if (!empty($user['bio'])) {
         $user_bio = htmlspecialchars($user['bio']);
     }
@@ -113,7 +126,7 @@ define('DEFAULT_EVENT_IMAGE', 'images/cover.png');
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <i class="fa-regular fa-bell fa-lg"></i>
             </li>
-            <li><img src="<?php echo htmlspecialchars($profile_picture); ?>" class="profile" alt="Profile"></li>
+            <li><img src="<?php echo $profile_picture; ?>" class="profile" alt="Profile"></li>
         </ul>
     </nav>
 
