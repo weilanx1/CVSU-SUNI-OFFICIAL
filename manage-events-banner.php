@@ -249,5 +249,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id']) && $org_i
     <!-- Dulo ng Banner Tab Content Area -->
 
   </div>
+  <script src="js/navbar.js"></script> 
 </body>
 </html>

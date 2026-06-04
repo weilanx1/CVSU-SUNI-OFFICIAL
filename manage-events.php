@@ -165,6 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id']) && $org_i
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" href="css/org-navbar.css">
   <link rel="stylesheet" href="css/sidebar.css"/>
+  <link rel="stylesheet" href="css/mini-nav.css"/>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body>
@@ -247,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id']) && $org_i
       <a href="manage-events.php?event_id=<?php echo $event ? intval($event['id']) : ''; ?>" class="tab-item active">Details</a>
       <a href="manage-events-banner.php?event_id=<?php echo $event ? intval($event['id']) : ''; ?>" class="tab-item">Banner</a>
       <a href="manage-events-guest.php?event_id=<?php echo $event ? intval($event['id']) : ''; ?>" class="tab-item">Guest</a>
-      <a href="#" class="tab-item">Registration</a>
+      <a href="#" class="tab-item" data-text="Registration">Registration</a>
     </div>
 
     <form action="" method="POST">
@@ -271,58 +272,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id']) && $org_i
         </div>
 
         <div class="form-row">
-          
-          <div class="form-group">
-            <label>Start</label>
-            <div class="split-input">
-              <div class="input-wrapper date-side">
+    <div class="form-group">
+        <label>Start</label>
+        <div class="split-input">
+            <div class="input-wrapper date-side">
                 <input type="text" id="start_date" name="start_date" class="form-control" value="<?php echo $event ? date('m/d/Y', strtotime($event['start_datetime'])) : ''; ?>">
-              </div>
-              <div class="input-wrapper time-side" style="position: relative;">
-                <input type="text" id="start_time" name="start_time" class="custom-time-input form-control" value="<?php echo $event ? date('h:i A', strtotime($event['start_datetime'])) : '07:00 AM'; ?>" placeholder="Select Time" readonly>
-                <div id="start_time_dropdown" class="custom-time-dropdown"></div>
-              </div>
             </div>
-          </div>
+            <div class="input-wrapper time-side">
+                <input type="text" id="start_time" name="start_time" class="custom-time-input form-control" value="<?php echo $event ? date('h:i A', strtotime($event['start_datetime'])) : '07:00 AM'; ?>" readonly>
+            </div>
+        </div>
+    </div>
 
-          <div class="form-group">
-            <label>End</label>
-            <div class="split-input">
-                <div class="input-wrapper date-side">
-                  <input type="text" id="end_date" name="end_date" class="form-control" value="<?php echo $event ? date('m/d/Y', strtotime($event['end_datetime'])) : ''; ?>">
-                </div>
-                <div class="input-wrapper time-side" style="position: relative;">
-                  <input type="text" id="end_time" name="end_time" class="custom-time-input form-control" value="<?php echo $event ? date('h:i A', strtotime($event['end_datetime'])) : '05:00 PM'; ?>" placeholder="Select Time" readonly>
-                  <div id="end_time_dropdown" class="custom-time-dropdown"></div>
-                </div>
-                <div class="visibility-component" style="display:inline-block; vertical-align: middle; margin-left:12px;">
-                  <div class="custom-visibility-trigger" id="visibilityTriggerInline" style="cursor:pointer; padding:6px 10px; border:1px solid #e0e0e0; border-radius:6px; background:#fff;">
-                    <span id="visibilityValueInline"><?php echo htmlspecialchars($visibility_display_inline); ?></span>
-                  </div>
-                  <div class="custom-visibility-panel" id="visibilityPanelInline" style="display:none; position:absolute; z-index:50;">
-                    <div class="visibility-option" data-value="Public"><span>Public</span></div>
-                    <div class="visibility-option" data-value="Private"><span>Private (Only you can see)</span></div>
-                    <div class="visibility-option" data-value="Department Only"><span>Department Only</span></div>
-                    <div class="visibility-option-parent" id="filterDeptOptionInline">
-                      <div class="option-header-title"><span>Restricted (Select Departments)</span></div>
-                      <div class="dept-checklist" id="deptChecklistInline">
+    <div class="form-group">
+        <label>End</label>
+        <div class="split-input">
+            <div class="input-wrapper date-side">
+                <input type="text" id="end_date" name="end_date" class="form-control" value="<?php echo $event ? date('m/d/Y', strtotime($event['end_datetime'])) : ''; ?>">
+            </div>
+            <div class="input-wrapper time-side">
+                <input type="text" id="end_time" name="end_time" class="custom-time-input form-control" value="<?php echo $event ? date('h:i A', strtotime($event['end_datetime'])) : '05:00 PM'; ?>" readonly>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group visibility-col">
+        <label>Visibility</label>
+        <div class="visibility-component">
+            <div class="custom-visibility-trigger" id="visibilityTriggerInline">
+                <span id="visibilityValueInline"><?php echo htmlspecialchars($visibility_display_inline); ?></span>
+            </div>
+            <div class="custom-visibility-panel" id="visibilityPanelInline">
+
+                <div class="visibility-option" data-value="Public"><span>Public</span></div>
+
+                <div class="visibility-option" data-value="Private"><span>Private (Only you can see)</span></div>
+
+                <div class="visibility-option" data-value="Department Only"><span>Department Only</span></div>
+
+                <div class="visibility-option-parent" id="filterDeptOptionInline">
+
+                    <div class="option-header-title"><span>Restricted (Select Departments)</span></div>
+
+                    <div class="dept-checklist" id="deptChecklistInline">
+
                         <?php foreach ($dept_list as $dept): ?>
-                        <label class="checkbox-row">
-                          <input type="checkbox" value="<?php echo $dept['id']; ?>" data-code="<?php echo htmlspecialchars($dept['code']); ?>" class="dept-cb-inline" <?php echo in_array(intval($dept['id']), $selected_departments ?? []) ? 'checked' : ''; ?>>
-                          <span><?php echo htmlspecialchars($dept['code']); ?></span>
-                        </label>
-                        <?php endforeach; ?>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-            </div>
-          </div>
 
+                        <label class="checkbox-row">
+
+                            <input type="checkbox" value="<?php echo $dept['id']; ?>" data-code="<?php echo htmlspecialchars($dept['code']); ?>" class="dept-cb-inline" <?php echo in_array(intval($dept['id']), $selected_departments ?? []) ? 'checked' : ''; ?>>
+
+                            <span><?php echo htmlspecialchars($dept['code']); ?></span>
+
+                        </label>
+
+                        <?php endforeach; ?>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
           <!-- Time zone removed; managed implicitly -->
 
         </div>
-
+                        </div>
         <div class="form-group">
           <label for="eventLocation">Event Location</label>
           <div class="input-wrapper has-icon">
@@ -472,5 +488,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id']) && $org_i
       })();
     </script>
     </div>
+    <script src="js/navbar.js"></script>
   </body>
 </html>

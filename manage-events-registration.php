@@ -566,5 +566,6 @@ if (!$event) {
       document.getElementById('customQuestionSocialModal').classList.remove('show');
   }
   </script>
+  <script src="js/navbar.js"></script>
 </body>
 </html>

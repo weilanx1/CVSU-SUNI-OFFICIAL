@@ -2,7 +2,7 @@
     font-family: poppins;
     src: url("../font/Poppins/Poppins-Light.ttf");
 }
-nav {
+nav{
     display: flex;
     justify-content: space-between; 
     align-items: center;        
@@ -13,11 +13,10 @@ nav {
 
     position: sticky;       
     top: 0;                 
-    
+    background-color: #ffffff; 
     z-index: 1000;          
-   
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); 
 }
-
 nav ul {
     list-style-type: none;
     display: flex;

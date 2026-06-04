@@ -317,7 +317,7 @@ while ($row = $result->fetch_assoc()) {
             <ul>
                 <li><a href="create-events.php">+ Create Events</a></li>
                 <li><a href="index.php">CvSU Events</a></li>
-                <li><a href="#">My Profile</a></li>
+                <li><a href="Myprofile.php">My Profile</a></li>
                 <li><a href="dashboard.php" class="active">Organization Dashboard</a></li>
                 <li class="nav-icons">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -335,10 +335,9 @@ while ($row = $result->fetch_assoc()) {
       <div class="table-toolbar">
         <div class="filter-group">
           
-          <div class="custom-modal-dropdown" id="toolbarSearchDropdown" style="width: 140px;">
+          <div style="width: 140px;">
             <div class="dropdown-selected-box" onclick="toggleDropdownEngine('toolbarSearchDropdown')" style="border-radius: 20px; border: 1px solid #000000; padding: 0.45rem 1.25rem;">
-              <span class="selected-value-label" style="color: #000000; font-size: 0.9rem;">Search</span>
-              <i class="fa-solid fa-chevron-down modal-select-caret"></i>
+              <span style="color: #000000; font-size: 0.9rem;">Search</span>
             </div>
             <ul class="dropdown-options-list">
               <li onclick="selectDropdownOption('toolbarSearchDropdown', 'Search', '')">Search</li>

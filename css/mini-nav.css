@@ -1,0 +1,43 @@
+.content-tabs {
+    display: flex;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 12px;
+    width: 100%;
+    height: 40px; 
+}
+
+.tab-item {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    white-space: nowrap;
+    /* Mahalaga: Parehong-pareho ang layout space */
+    min-width: 90px; 
+}
+
+.tab-item.active {
+    color: var(--primary-green);
+    font-weight: 600; /* Dito lang magbabago ang weight */
+}
+
+/* Green border na laging nasa pwesto */
+.tab-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-green);
+}
+
+/* Importante: Para walang "layout shift" dahil sa scrollbar */
+body {
+    overflow-y: scroll;
+}

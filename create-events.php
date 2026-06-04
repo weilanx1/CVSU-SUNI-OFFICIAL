@@ -419,5 +419,6 @@ $black_placeholder = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%2
             document.getElementById(removeBtnId).style.display = 'none'; // Hide delete wrapper until next update
         }
     </script>
+    <script src="js/navbar.js"></script>
 </body>
 </html>

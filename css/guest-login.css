@@ -19,7 +19,9 @@
     padding: 0;
     box-sizing: border-box;
 }
-        
+body{
+   
+}
 body.login-bg {
     background-image: url("../images/bglogin.png");
     background-repeat: no-repeat;
@@ -27,13 +29,14 @@ body.login-bg {
     background-size: cover;
     height: 100vh;
     background-attachment: fixed;
+     overflow: hidden;
 }
 
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top:80px ; 
+    min-height: calc(100vh - 70px);
     width: 100%;
 }
 .form-header {

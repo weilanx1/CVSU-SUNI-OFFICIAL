@@ -249,7 +249,7 @@ if ($dr) while ($d = $dr->fetch_assoc()) $dept_list[] = $d;
                         <i class="fa-regular fa-bell fa-lg"></i>
                     </li>
                     <li><img src="<?php echo $profile_picture; ?>" class="profile" alt="Profile"></li>
-                    <li><a href="sign-in.php" class="sign-out-link white">Sign Out</a></li>
+                
                 </ul>
             </div>
         </nav>

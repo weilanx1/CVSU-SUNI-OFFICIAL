@@ -217,6 +217,7 @@ function derive_display(array $r): array {
   <link rel="stylesheet" href="css/manage-events-guest.css"/>
   <link rel="stylesheet" href="css/org-navbar.css">
   <link rel="stylesheet" href="css/sidebar.css"/>
+  <link rel="stylesheet" href="css/mini-nav.css"/>
 </head>
 <body>
 
@@ -267,7 +268,7 @@ function derive_display(array $r): array {
         <a href="manage-events.php?event_id=<?php echo $event_id; ?>"              class="tab-item">Details</a>
         <a href="manage-events-banner.php?event_id=<?php echo $event_id; ?>"       class="tab-item">Banner</a>
         <a href="manage-events-guest.php?event_id=<?php echo $event_id; ?>"        class="tab-item active">Guest</a>
-        <a href="manage-events-registration.php?event_id=<?php echo $event_id; ?>" class="tab-item">Registration</a>
+        <a href="manage-events-registration.php?event_id=<?php echo $event_id; ?>" class="tab-item"  data-text="Registration">Registration</a>
       </div>
 
       <div class="manage-card">
@@ -625,5 +626,6 @@ function updateGlanceCounts() {
   document.getElementById('glanceBar').style.width = pct + '%';
 }
 </script>
+<script src="js/navbar.js"></script>
 </body>
 </html>

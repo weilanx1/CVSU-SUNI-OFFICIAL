@@ -564,7 +564,88 @@ body {
     color: #333;
     font-weight: 500;
 }
+/* Wrapper para sa dropdown positioning */
+.profile-dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+    list-style: none;
+}
 
+/* Ang mismong dropdown box (Puti na base sa screenshot) */
+.profile-dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 50px; /* Adjust depende sa taas ng iyong navbar */
+    background-color: #ffffff;
+    min-width: 260px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1); /* Mas malambot na shadow */
+    border-radius: 12px;
+    z-index: 9999;
+    padding: 15px 0;
+    border: 1px solid #e2e8f0; /* Manipis na border na light gray */
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Kapag may class na 'active', lalabas ang dropdown */
+.profile-dropdown-menu.active {
+    display: block;
+}
+
+/* User details section sa loob ng dropdown */
+.dropdown-user-details {
+    padding: 0 20px 15px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.dropdown-user-details p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b; /* Madilim na text */
+}
+
+.dropdown-user-details span {
+    font-size: 13px;
+    color: #64748b; /* Muted gray para sa email */
+}
+
+/* Linya sa pagitan */
+.profile-dropdown-menu hr {
+    border: 0;
+    height: 1px;
+    background-color: #f1f5f9;
+    margin: 5px 0;
+}
+
+/* Links sa loob ng dropdown */
+.profile-dropdown-menu a {
+    color: #334155 !important;
+    padding: 10px 20px;
+    text-decoration: none !important;
+    display: flex !important;
+    align-items: center;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.profile-dropdown-menu a:hover {
+    background-color: #f8fafc;
+}
+
+/* Sign Out link specific style */
+.profile-dropdown-menu a.sign-out-item {
+    color: #000000 !important; /* Itim na kulay lang, tinanggal ang red comment */
+    margin-top: 5px;
+}
+
+/* ITONG MAIKLING PART NA ITO ANG INAYOS NATIN */
+.profile-dropdown-menu a.sign-out-item:hover {
+    background-color: #f8fafc !important; 
+    color: #000000 !important;             
+}
 /* Responsive Media Queries for Mobile/Tablet layout viewports */
 @media(max-width: 992px) {
     .dashboard-grid {
