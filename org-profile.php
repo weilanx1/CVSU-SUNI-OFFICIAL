@@ -8,15 +8,14 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$user_id = $_SESSION['user_id'];
+$user_id = (int)$_SESSION['user_id']; 
 $default_avatar = 'images/person3.png';
 $profile_picture = $default_avatar;
 $organization = null;
-$department_name = '';
 $error_msg = '';
 $success_msg = '';
 
-// Fetch user profile picture
+// 1. Fetch current logged-in user's personal profile picture
 $stmt = $conn->prepare('SELECT profile_picture FROM users WHERE id = ? LIMIT 1');
 $stmt->bind_param('i', $user_id);
 $stmt->execute();
@@ -25,7 +24,6 @@ $user = $result->fetch_assoc();
 
 if ($user && !empty($user['profile_picture'])) {
     $db_user_path = $user['profile_picture'];
-    // Defensive physical file check
     if (file_exists($db_user_path) && is_file($db_user_path)) {
         $profile_picture = htmlspecialchars($db_user_path);
     } else {
@@ -33,102 +31,98 @@ if ($user && !empty($user['profile_picture'])) {
     }
 }
 
-// Fetch organization where user is main_admin or organization admin/moderator
+// 2. FETCH ORGANIZATION (Using LEFT JOINs to prevent layout breakdown if tables are empty)
 $org_stmt = $conn->prepare('
-    SELECT o.id, o.name, o.logo, o.department_id, d.name as dept_name, o.main_admin_id
+    SELECT 
+        o.id, 
+        o.name, 
+        o.logo, 
+        o.department_id, 
+        IFNULL(d.name, "No Department Assigned") as dept_name, 
+        o.main_admin_id,
+        IF(o.main_admin_id = ?, "main_admin", oa.role) AS determined_role
     FROM organizations o
-    JOIN departments d ON o.department_id = d.id
-    WHERE o.main_admin_id = ?
+    LEFT JOIN departments d ON o.department_id = d.id
+    LEFT JOIN organization_admins oa ON o.id = oa.organization_id AND oa.user_id = ?
+    WHERE o.main_admin_id = ? OR oa.user_id = ?
     LIMIT 1
 ');
-$org_stmt->bind_param('i', $user_id);
+
+$org_stmt->bind_param('iiii', $user_id, $user_id, $user_id, $user_id);
 $org_stmt->execute();
 $org_result = $org_stmt->get_result();
 
-if ($org_result->num_rows == 0) {
-    // Check if user is an organization admin or moderator
-    $admin_stmt = $conn->prepare('
-        SELECT o.id, o.name, o.logo, o.department_id, d.name as dept_name, o.main_admin_id, oa.role
-        FROM organizations o
-        JOIN organization_admins oa ON o.id = oa.organization_id
-        JOIN departments d ON o.department_id = d.id
-        WHERE oa.user_id = ? AND oa.role IN ("admin", "moderator")
-        LIMIT 1
-    ');
-    $admin_stmt->bind_param('i', $user_id);
-    $admin_stmt->execute();
-    $admin_result = $admin_stmt->get_result();
-    
-    if ($admin_result->num_rows > 0) {
-        $organization = $admin_result->fetch_assoc();
-    } else {
-        $error_msg = 'You do not have permission to view this page. Only organization admins or moderators can access this.';
-    }
-} else {
+if ($org_result && $org_result->num_rows > 0) {
     $organization = $org_result->fetch_assoc();
-    $organization['role'] = 'main_admin';
+    $organization['role'] = $organization['determined_role'];
+} else {
+    $error_msg = 'You do not have permission to view this page. (Logged in User ID: ' . $user_id . '). Only organization creators, admins, or moderators can access this.';
 }
 
+// 3. Set Editing Permissions Rule (main_admin and admin can edit; moderator cannot)
+$can_edit = ($organization && isset($organization['role']) && $organization['role'] !== 'moderator');
 
-// Handle form submission
+// 4. Handle Form Submission Update
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $organization) {
-    $org_id = $organization['id'];
-    $org_name = trim($_POST['organization_name'] ?? '');
-    $logo_path = $organization['logo']; // Keep existing logo by default
     
-    // Validate organization name
-    if (empty($org_name)) {
-        $error_msg = 'Organization name cannot be empty.';
+    if (!$can_edit) {
+        $error_msg = 'Unauthorized action. Moderators do not have permission to edit organization information.';
     } else {
-        // Handle logo upload if provided
-        if (isset($_FILES['org_logo']) && $_FILES['org_logo']['size'] > 0) {
-            $file = $_FILES['org_logo'];
-            $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-            
-            if (!in_array($file['type'], $allowed_types)) {
-                $error_msg = 'Invalid file type. Only image files are allowed.';
-            } elseif ($file['size'] > 5000000) { // 5MB limit
-                $error_msg = 'File size exceeds 5MB limit.';
-            } else {
-                $upload_dir = 'images/org-logos/';
-                if (!is_dir($upload_dir)) {
-                    mkdir($upload_dir, 0755, true);
-                }
+        $org_id = $organization['id'];
+        $org_name = trim($_POST['organization_name'] ?? '');
+        $logo_path = $organization['logo']; 
+        
+        if (empty($org_name)) {
+            $error_msg = 'Organization name cannot be empty.';
+        } else {
+            // Handle logo file upload
+            if (isset($_FILES['org_logo']) && $_FILES['org_logo']['size'] > 0) {
+                $file = $_FILES['org_logo'];
+                $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
                 
-                $file_name = 'org_' . $org_id . '_' . time() . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
-                $file_path = $upload_dir . $file_name;
-                
-                if (move_uploaded_file($file['tmp_name'], $file_path)) {
-                    $logo_path = $file_path;
+                if (!in_array($file['type'], $allowed_types)) {
+                    $error_msg = 'Invalid file type. Only image files are allowed.';
+                } elseif ($file['size'] > 5000000) { 
+                    $error_msg = 'File size exceeds 5MB limit.';
                 } else {
-                    $error_msg = 'Failed to upload image.';
+                    $upload_dir = 'images/org-logos/';
+                    if (!is_dir($upload_dir)) {
+                        mkdir($upload_dir, 0755, true);
+                    }
+                    
+                    $file_name = 'org_' . $org_id . '_' . time() . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
+                    $file_path = $upload_dir . $file_name;
+                    
+                    if (move_uploaded_file($file['tmp_name'], $file_path)) {
+                        $logo_path = $file_path; 
+                    } else {
+                        $error_msg = 'Failed to upload image to directory.';
+                    }
                 }
             }
-        }
-        
-        // Update organization in database
-        if (empty($error_msg)) {
-            $update_stmt = $conn->prepare('UPDATE organizations SET name = ?, logo = ? WHERE id = ?');
-            $update_stmt->bind_param('ssi', $org_name, $logo_path, $org_id);
             
-            if ($update_stmt->execute()) {
-                $success_msg = 'Organization profile updated successfully!';
-                $organization['name'] = $org_name;
-                $organization['logo'] = $logo_path;
-            } else {
-                $error_msg = 'Failed to update organization.';
+            // Execute database updates if there are no errors
+            if (empty($error_msg)) {
+                $update_stmt = $conn->prepare('UPDATE organizations SET name = ?, logo = ? WHERE id = ?');
+                $update_stmt->bind_param('ssi', $org_name, $logo_path, $org_id);
+                
+                if ($update_stmt->execute()) {
+                    $success_msg = 'Organization profile updated successfully!';
+                    $organization['name'] = $org_name;
+                    $organization['logo'] = $logo_path; 
+                } else {
+                    $error_msg = 'Failed to update organization records in database.';
+                }
             }
         }
     }
 }
 
-// Fallback logic for Organization Logo path validation
-$org_logo = $default_avatar;
+// 5. Smart Image Resolver
+$org_logo = $default_avatar; 
 if ($organization && !empty($organization['logo'])) {
     $db_logo_path = $organization['logo'];
-    if (file_exists($db_logo_path) && is_file($db_logo_path)) {
-        $org_logo = htmlspecialchars($db_logo_path);
-    }
+    $org_logo = htmlspecialchars($db_logo_path);
 }
 
 $org_name = $organization ? htmlspecialchars($organization['name']) : '';
@@ -229,7 +223,7 @@ $dept_name = $organization ? htmlspecialchars($organization['dept_name']) : '';
 
         <?php if (!empty($error_msg)): ?>
           <div style="background-color: #fee; color: #c33; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
-            <?php echo htmlspecialchars($error_msg); ?>
+            <?php echo $error_msg; ?>
           </div>
         <?php endif; ?>
 
@@ -241,7 +235,7 @@ $dept_name = $organization ? htmlspecialchars($organization['dept_name']) : '';
 
         <?php if ($organization): ?>
         <section class="profile-form-section">
-          <h2 class="form-section-title">Profile</h2>
+          <h2> Profile</h2>
           
           <form id="orgProfileForm" method="POST" enctype="multipart/form-data">
             
@@ -251,10 +245,13 @@ $dept_name = $organization ? htmlspecialchars($organization['dept_name']) : '';
                 <div class="avatar-display">
                   <img id="profileDisplayImage" src="<?php echo $org_logo; ?>" alt="Organization Logo">
                 </div>
+                
+                <?php if ($can_edit): ?>
                 <label for="imageUploadInput" class="avatar-upload-badge" title="Upload Image">
                   <i class="fa-solid fa-arrow-up"></i>
                 </label>
                 <input type="file" id="imageUploadInput" name="org_logo" accept="image/*" style="display: none;">
+                <?php endif; ?>
               </div>
             </div>
 
@@ -267,6 +264,7 @@ $dept_name = $organization ? htmlspecialchars($organization['dept_name']) : '';
                 class="form-text-input" 
                 value="<?php echo $org_name; ?>" 
                 required
+                <?php echo !$can_edit ? 'disabled style="background-color: #f5f5f5; cursor: not-allowed;"' : ''; ?>
               >
             </div>
 
@@ -276,19 +274,19 @@ $dept_name = $organization ? htmlspecialchars($organization['dept_name']) : '';
             </div>
 
             <div class="form-submit-row">
-              <button type="submit" class="btn-save-profile">
-                <i class="fa-solid fa-user-plus"></i> Save Changes
-              </button>
+              <?php if ($can_edit): ?>
+                <button type="submit" class="btn-save-profile">
+                  <i class="fa-solid fa-user-plus"></i> Save Changes
+                </button>
+              <?php else: ?>
+                <p style="color: #999; font-size: 0.9rem;"><i class="fa-solid fa-lock"></i> Editing is restricted for Moderators.</p>
+              <?php endif; ?>
             </div>
             
             <p class="form-system-notice">Changes to your organization name or profile picture are applied across SUNI.</p>
 
           </form>
         </section>
-        <?php else: ?>
-        <div style="padding: 20px; text-align: center; color: #666;">
-          <p><?php echo htmlspecialchars($error_msg); ?></p>
-        </div>
         <?php endif; ?>
 
       </div>
@@ -296,16 +294,18 @@ $dept_name = $organization ? htmlspecialchars($organization['dept_name']) : '';
   </div>
 
   <script>
-    // Live update profile photo display upon selection
-    document.getElementById('imageUploadInput').addEventListener('change', function(e) {
-      if(e.target.files && e.target.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-          document.getElementById('profileDisplayImage').src = event.target.result;
-        };
-        reader.readAsDataURL(e.target.files[0]);
-      }
-    });
+    const uploadInput = document.getElementById('imageUploadInput');
+    if(uploadInput) {
+      uploadInput.addEventListener('change', function(e) {
+        if(e.target.files && e.target.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function(event) {
+            document.getElementById('profileDisplayImage').src = event.target.result;
+          };
+          reader.readAsDataURL(e.target.files[0]);
+        }
+      });
+    }
   </script>
 </body>
 </html>
