@@ -2,17 +2,14 @@
     font-family: poppins;
     src: url("../font/Poppins/Poppins-Regular.ttf");
 }
-
 @font-face {
     font-family: poppinsBold;
     src: url("../font/Poppins/Poppins-Bold.ttf");
 }
-
 @font-face {
     font-family: bricolage;
     src: url("../font/bricolage/BricolageGrotesque-VariableFont_opsz,wdth,wght.ttf");
 }
-
 @font-face {
     font-family: lato;
     src: url("../font/Lato/Lato-Regular.ttf");
@@ -30,400 +27,372 @@ body{
     color: #222;
 }
 
-/* =========================
-   HERO SECTION
-========================= */
-
+/* ==========================================================================
+   HERO SECTION & CONTENT
+   ========================================================================== */
 .hero{
     width: 100%;
     height: 800px;
     min-height: 800px;
     max-height: 8000px;
-
-    background-image:
-    linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
-    url("../images/cover.png");
-
+    background-image: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url("../images/cover.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-
     position: relative;
-
     padding: 20px 0 0;
     overflow: hidden;
 }
 
-
-/* =========================
-   HERO CONTENT
-========================= */
-
 .hero-content{
     width: 1100px;
     margin: 70px auto 0;
-
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-/* LEFT SIDE */
-
-.hero-left{
-    width: 470px;
-}
-
+.hero-left{ width: 470px; }
 .hero-left img{
     width: 470px;
     height: 470px;
-
     object-fit: cover;
     border-radius: 25px;
 }
 
-/* RIGHT SIDE */
-
-.right-side{
-    width: 560px;
-    color: white;
-}
-
+.right-side{ width: 560px; color: white; }
 .right-side h1{
     font-size: 70px;
     font-weight: 600;
-
     margin-bottom: 20px;
 }
 
-/* =========================
-   PEOPLE
-========================= */
-
-.people{
-    display: flex;
-    gap: 50px;
-
-    margin-bottom: 25px;
-}
-
-.avatars{
-    display: flex;
-    align-items: center;
-
-    margin-top: 10px;
-}
-
+.people{ display: flex; gap: 50px; margin-bottom: 25px; }
+.avatars{ display: flex; align-items: center; margin-top: 10px; }
 .avatars img{
     width: 38px;
     height: 38px;
-
     object-fit: cover;
     border-radius: 50%;
-
     margin-left: -10px;
 }
+.avatars img:first-child{ margin-left: 0; }
+.avatars p{ margin-left: 10px; font-size: 18px; }
 
-.avatars img:first-child{
-    margin-left: 0;
-}
-
-.avatars p{
-    margin-left: 10px;
-    font-size: 18px;
-}
-
-/* =========================
-   HOST
-========================= */
-
-.host{
-    display: flex;
-    align-items: center;
-    gap: 15px;
-
-    margin-bottom: 30px;
-}
-
+.host{ display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
 .host img{
     width: 60px;
     height: 60px;
-
     object-fit: cover;
     border-radius: 50%;
-
     background: white;
 }
-
-.host span{
-    font-size: 14px;
-}
-
-.host h3{
-    font-weight: 500;
-}
-
-.host i{
-    margin-left: auto;
-    font-size: 22px;
-}
-
-/* =========================
-   EVENT INFO
-========================= */
+.host span{ font-size: 14px; }
+.host h3{ font-weight: 500; }
+.host i{ margin-left: auto; font-size: 22px; }
 
 .event-info{
     width: 100%;
-    max-width: 100%;
-
     background: rgba(255, 255, 255, 0.08);
-
     backdrop-filter: blur(15px);
-
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 20px;
-
     padding: 15px 25px;
-
     display: flex;
     flex-direction: column;
     gap: 16px;
-    align-items: stretch;
-
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
+.info-box{ display: flex; align-items: flex-start; gap: 10px; width: 100%; word-break: break-word; }
+.info-box img{ width: 28px; height: 28px; object-fit: contain; }
+.info-box p{ font-size: 12px; color: white; }
 
-.info-box{
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 10px;
-
-    white-space: normal;
-    width: 100%;
-    min-width: 0;
-    word-break: break-word;
-}
-
-.info-box p{
-    font-size: 12px;
-    color: white;
-    overflow-wrap: anywhere;
-}
-
-.info-box img{
-    width: 28px;
-    height: 28px;
-
-    object-fit: contain;
-}
-
-.info-box p{
-    font-size: 12px;
-    color: white;
-}
-
-/* =========================
-   MAIN CONTENT
-========================= */
-
+/* ==========================================================================
+   MAIN COLUMNS
+   ========================================================================== */
 .main-content{
     width: 1100px;
     margin: 70px auto;
-
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
 }
-/* LEFT COLUMN */
-.left-column{
-    width: 470px;
-    display: flex;
-    justify-content: center;
+.left-column{ width: 470px; display: flex; justify-content: center; }
+.right-column{ width: 560px; }
+.right-column h2{ font-family: poppinsBold; margin-bottom: 10px; }
+.right-column hr{ margin-bottom: 30px; }
+.right-column p{ font-family: bricolage; font-size: 18px; line-height: 1.8; }
+
+/* ==========================================================================
+   EXACT SCALLOPED TICKET VIEW UI LAYOUT
+   ========================================================================== */
+.ticket-scalloped-container {
+    width: 480px;
+    min-height: 250px;
+    background: #ffffff;
+    position: relative;
+    border-radius: 16px;
+    padding: 24px 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px dashed #e0e0e0;
 }
-/* =========================
-   TICKET CARD
-========================= */
-/* Gamitin ang ID para makuha ang disenyo ng ticket */
-#ticket-ui {
-    width: 500px;
-    height: 300px; /* Panatilihin kung ito ang gusto mong fixed size */
-    background-image: url("../images/TICKET2.png");
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-position: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; 
-    color: #222;
-    background-color: transparent !important;          
-    border: none !important;
-    margin: 0 auto;
+
+/* Scalloped Edge Side Cutouts */
+.ticket-scalloped-container::before,
+.ticket-scalloped-container::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background: #f3f3f3; /* Matches page background color */
+    border-radius: 50%;
+    z-index: 5;
+    box-shadow: inset 1px 0 3px rgba(0,0,0,0.05);
+}
+.ticket-scalloped-container::before { left: -12px; }
+.ticket-scalloped-container::after { right: -12px; }
+
+.ticket-header-label {
+    text-align: center;
+    color: #6da37e;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    font-family: "Poppins", sans-serif;
+    margin-bottom: 12px;
+}
+
+.ticket-line-divider {
+    border-top: 1px solid #ededed;
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.ticket-body-layout {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 40px 40px 30px;
-    
+    width: 100%;
 }
 
-    /* Dagdag sa CSS para maging consistent ang hitsura ng link */
-#ticket-ui a {
-    text-decoration: none;
-    color: #005b20; /* Matching sa iyong green theme */
-}
-#ticket-ui a:hover {
-    text-decoration: underline;
-}
-#ticket-ui h2 {
-    text-align: center;
-    color: #5b9a67;
-    font-size: 18px;
-    margin-top: -35px;
-    margin-bottom: 45px;
-}
-.ticket-profile {
+.ticket-profile-row {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-top: 30px; /* Alisin ang dagdag na margin sa taas */
-    width: 100%;
-    justify-content: flex-start;
-    margin-bottom: 5px !important; /* DITO: Gawing napakaliit na gap (5px) */
+    gap: 14px;
+    margin-bottom: 14px;
 }
-.ticket-profile img {
-    width: 70px;
-    height: 70px;
-    object-fit: cover;
+.ticket-profile-row img {
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #eaeaea;
 }
-.ticket-profile p {
+.ticket-profile-details h3 {
+    font-size: 17px;
+    font-weight: 600;
+    color: #111111;
+    margin: 0;
+}
+.ticket-profile-details p {
+    font-size: 12px;
+    color: #949494;
+    margin: 2px 0 0;
+}
+
+/* Status Strings Styling */
+.ticket-status-text {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.text-green { color: #1f6f3d; }
+.text-teal { color: #2e8b75; }
+.text-red { color: #ff4d4d; }
+.text-orange { color: #e67e22; }
+
+.fa-arrow-rotate-right { color: #2e8b75; font-size: 13px; }
+.text-green-check { color: #7cb342; font-size: 20px; }
+.text-red-icon { color: #ff4d4d; }
+
+.ticket-welcome-msg {
+    font-size: 12px;
+    color: #333333;
+    line-height: 1.5;
+    margin-bottom: 14px;
+}
+
+.ticket-cancel-notice {
+    font-size: 11px;
+    color: #111;
+}
+.ticket-cancel-notice a {
+    color: #ff4d4d;
+    text-decoration: underline;
+}
+
+.ticket-explore-text {
+    font-size: 11px;
+    color: #444;
+}
+.ticket-explore-text a {
+    color: #000;
+    text-decoration: none;
+}
+
+/* Action Buttons Inside Ticket */
+.btn-ticket-join {
+    width: 100%;
+    background: #004d20;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-weight: 600;
     font-size: 13px;
-    color: #666;
-    font-family: lato, sans-serif;
-}
-#ticket-ui h4 {
-    color: #4c9b5d;
-    font-size: 18px;
-    margin-bottom: 5px;
-    margin-top: 80px;
-    margin: 0 !important;
-}
-.ticket-ui h4,
-.ticket-ui p {
-    margin: 0 !important; /* Tinatanggal nito ang default gap ng browser */
-    line-height: 1.2;
-}
-.welcome {
-    margin-bottom: 35px;
-    font-family: bricolage, sans-serif;
-}
-/* Header styling */
-.ticket-header {
-    font-family: poppins;
-    font-size: 20px;
-    font-weight: bold;
-    color: #528f67;
-    width: 100%;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-     
-    margin-left: 0 !important; /* Alisin ang 90px na nagtutulak sa gilid */
-}
-/* Line separator */
-.ticket-divider {
-    width: 100%;
-    border: 0;
-    border-top: 1px solid #eee;
-    margin-bottom: 20px; /* Dito ang susi: nagbibigay ito ng space sa baba ng line */
-}
-.content-wrapper {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    /* DITO: Adjust mo ito kung gusto mong ilapit/ilayo sa profile */
-}
-/* Para sa button sa loob ng ticket-ui */
-#ticket-ui button {
-    width: 100%;
-    padding: 15px;
-    margin-top: auto; /* Itutulak ang button sa pinakailalim ng container */
     cursor: pointer;
-    border: none;
-    border-radius: 10px;
-    background: #005b20;
-    color: white;
-}
-#ticket-ui button:hover {
-    background: #014118;
-}
-/* Container para sa cancel screen */
-.cancel-confirm-box {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Ito ang nagpapagitna sa lahat ng element */
-    justify-content: center;
+    transition: background 0.2s;
     text-align: center;
-    gap: 15px;
-    height: 100%;
 }
+.btn-ticket-join:hover { background: #003616; }
 
-.cancel-confirm-box h3 {
-    margin-bottom: 5px;
-}
-
-/* Container para sa dalawang buttons */
-.cancel-actions {
+/* Cancel Registration Internal Layout View */
+.text-center { text-align: center; }
+.ticket-cancel-headline {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111;
+    margin: 10px 0;
     display: flex;
-    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.ticket-cancel-body-msg {
+    font-size: 12px;
+    color: #555;
+    padding: 0 15px;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+.ticket-cancel-buttons-wrapper {
+    display: flex;
+    gap: 12px;
     width: 100%;
-    margin-top: 10px;
 }
-
-.btn-confirm {
-    background: #e74c3c !important;
-    color: white;
+.btn-confirm-cancel {
     flex: 1;
+    background: #ff3333;
+    color: #fff;
     border: none;
+    border-radius: 20px;
     padding: 12px;
-    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-dismiss-cancel {
+    flex: 1;
+    background: #b0afb4;
+    color: #111;
+    border: none;
+    border-radius: 20px;
+    padding: 12px;
+    font-weight: 600;
     cursor: pointer;
 }
 
-.btn-dismiss {
-    background: #95a5a6 !important;
-    color: white;
-    flex: 1;
-    border: none;
-    padding: 12px;
-    border-radius: 8px;
-    cursor: pointer;
+/* Approved State Layout */
+.ticket-approved-header-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
 }
+.approved-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.approved-title-block h2 {
+    font-size: 19px;
+    font-weight: 700;
+    color: #111111;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.approved-title-block p {
+    font-size: 12px;
+    color: #333333;
+    margin: 2px 0 0;
+}
+.ticket-save-instruction {
+    font-size: 11px;
+    color: #777777;
+    text-align: center;
+    margin: 10px 0;
+}
+.ticket-action-stub-box {
+    display: flex;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 4px;
+    align-items: center;
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.stub-brand-side {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background: #fafafa;
+    border-right: 1px dashed #cbd5e1;
+}
+.stub-brand-side img {
+    height: 24px;
+    object-fit: contain;
+}
+.btn-stub-view {
+    flex: 1;
+    background: #7cb342;
+    color: #ffffff;
+    border: none;
+    font-weight: 700;
+    font-size: 12px;
+    height: 100%;
+    padding: 14px 0;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+}
+.btn-stub-view:hover { background: #689f38; }
 
-.btn-confirm:hover { background: #c0392b; }
-.btn-dismiss:hover { background: #7f8c8d; }
-/* =========================
-   MODAL
-========================= */
+/* ==========================================================================
+   REGISTRATION FORM MODAL LAYOUT
+   ========================================================================== */
 .req{
     position: fixed;
     inset: 0;
     background: rgba(0,0,0,0.45);
     backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     display: none;
     justify-content: center;
     align-items: center;
     z-index: 999;
     padding: 30px;
 }
-
-.req.open{
-    display: flex;
-}
-
-/* MAIN BOX */
+.req.open{ display: flex; }
 .req-inner{
-    width: 700px; /* fixed smaller width */
+    width: 700px;
     max-width: 90%;
     background: #fff;
     border-radius: 18px;
@@ -432,13 +401,7 @@ body{
     box-shadow: 0 10px 30px rgba(0,0,0,0.20);
     max-height: 85vh;
     overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
 }
-.req-inner::-webkit-scrollbar{
-    display: none;
-}
-/* CLOSE BUTTON */
 .modal-close{
     position: absolute;
     top: 16px;
@@ -451,356 +414,36 @@ body{
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: 0.3s;
 }
-.modal-close i{
-    font-size: 22px;
-}
-.modal-close:hover{
-    background: #ddd;
-}
+.popup-header{ text-align: center; margin-bottom: 20px; }
+.popup-header h2{ font-size: 25px; font-family: bricolage; color: #252825; }
+.modal-subtitle{ font-family: bricolage; font-size: 11px; color: #252825; }
+.popup-body { display: flex; gap: 16px; }
+.popup-left { width: 42%; flex-shrink: 0; }
+.popup-left img { width: 100%; height: 280px; object-fit: cover; border-radius: 16px; }
+.popup-right { flex: 1; }
+.notice{ background: #ebf5ed; color: #4a5568; padding: 10px 12px; border-radius: 12px; font-size: 12px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+.section-title { font-size: 14px; font-family: bricolage; margin-bottom: 4px; }
+#regForm { display: flex; flex-direction: column; gap: 12px; }
+.form-row { display: flex; gap: 16px; }
+.input-wrapper { flex: 1; display: flex; flex-direction: column; }
+.input-wrapper label { font-size: 13px; margin-bottom: 5px; color: #828282; }
+.input-wrapper input { width: 100%; padding: 0 10px; border: 1px solid #ddd; border-radius: 999px; font-size: 13px; height: 34px; outline: none; }
+.custom-dropdown { position: relative; width: 100%; }
+.dropdown-header { height: 34px; padding: 0 12px; border: 1px solid #ddd; border-radius: 999px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; cursor: pointer; }
+.dropdown-list { position: absolute; top: 40px; left: 0; width: 100%; background: #fff; border: 1px solid #ddd; border-radius: 12px; list-style: none; padding: 5px 0; display: none; z-index: 10; }
+.custom-dropdown.open .dropdown-list { display: block; }
+.dropdown-list li { padding: 8px 12px; font-size: 13px; cursor: pointer; }
+.dropdown-list li:hover { background: #f3f3f3; }
+.submit-btn { width: 100%; padding: 10px; border: none; border-radius: 5px; background: #004d20; color: white; font-size: 12px; cursor: pointer; }
 
-/* HEADER */
-.popup-header{
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.popup-header h2{
-    font-size: 25px;
-    font-family: bricolage;
-    color: #252825;
-    line-height: 1.1;
-    margin-bottom: 8px;
-    margin-top: 8px;
-    align-items: center;
-}
-
-.modal-subtitle{
-    font-family: bricolage;
-    font-size: 11px;
-    color: #252825;
-}
-
-/* BODY */
-.popup-body{
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-}
-
-/* LEFT IMAGE */
-.popup-left{
-    width: 42%;
-    flex-shrink: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: visible;
-
-}
-
-.popup-left img{
-    width: 100%;
-    height: 280px;
-    aspect-ratio: 1/1;
-
-    object-fit: cover;
-    border-radius: 16px;
-}
-
-/* RIGHT FORM */
-.popup-right{
-    flex: 1;
-    width:58%
-}
-
-/* NOTICE */
-.notice{
-    background: #ebf5ed;
-    color: #4a5568;
-    padding: 10px 12px;
-    border-radius: 12px;
-    font-family: lato;
-    font-size: 12px;
-    margin-bottom: 14px;    
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-/* SECTION TITLES */
-.section-title{
-    font-size: 14px;
-    font-family: bricolage;
-    color: #252825;
-
-    margin-bottom: 4px;
-}
-.form-row-3{
-    display: flex;
-    gap: 14px;
-    font-family: bricolage;
-}
-.input-wrapper{
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-/* LABEL */
-.input-wrapper label{
-    font-family: bricolage;
-    font-size: 13px;
-    margin-bottom: 5px;
-    color: #828282;
-}
-/* DROPDOWN */
-.custom-dropdown{
-    position: relative;
-    width: 100%;
-}
-/* HEADER */
-.dropdown-header{
-    height: 40px;
-    padding: 0 12px;
-    border: 1px solid #ddd;
-    border-radius: 999px;
-    background: #fff;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 7px;
-    cursor: pointer;
-}
-.arrow{
-    font-size: 18px;
-    color: #555;
-    transition: transform 0.3s ease;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.custom-dropdown.open .arrow{
-    transform: rotate(180deg);
-}
-.dropdown-list{
-    position: absolute;
-    top: 48px;
-    left: 0;
-    width: 100%;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-
-    list-style: none;
-    padding: 5px 0;
-
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: 0.2s;
-
-    z-index: 10;
-}
-
-/* SHOW */
-.custom-dropdown.open .dropdown-list{
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-/* ITEMS */
-.dropdown-list li{
-    padding: 8px 12px;
-    font-size: 13px;
-    cursor: pointer;
-}
-
-.dropdown-list li:hover{
-    background: #f3f3f3;
-}
-/* FORM */
-#regForm{
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-.form-row{
-    display: flex;
-    gap: 16px;
-}
-.dropdown-list::-webkit-scrollbar{
-    display: none;
-}
-/* INPUTS */
-.input-wrapper input,
-.input-wrapper select{
-    width: 100%;
-
-    padding: 0px 5px;
-
-    border: 1px solid #ddd;
-    border-radius: 999px;
-
-    font-size: 13px;
-    background: white;
-
-    outline: none;
-    height: 34px;
-}
-.input-wrapper input:focus,
-.input-wrapper select:focus{
-    border-color: #8b3dff;
-}
-
-.helper-text{
-    font-family: bricolage;
-    font-size: 12px;
-    color: #252825;
-    margin-top: 6px;
-}
-
-hr{
-    border: none;
-    border-top: 1px solid #eee;
-    margin: 8px 0;
-}
-.dropdown-header,
-.input-wrapper input{
-    height: 34px;
-    padding: 0 10px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-}
-/* BUTTON */
-.submit-btn{
-    width: 100%;
-    padding: 10px 14px !important;
-    border: none;
-    border-radius: 5px;
-    background: #004d20;
-    color: white;
-    font-size: 12px !important;
-    font-family: poppins;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: 0.3s;
-}
-.submit-btn:hover{
-    background: #014118;
-}
-.right-column{
-    width: 560px;
-}
-
-.right-column h2{
-    font-family: poppinsBold;
-    margin-bottom: 10px;
-}
-
-.right-column hr{
-    margin-bottom: 30px;
-}
-
-.right-column p{
-    font-family: bricolage;
-    font-size: 18px;
-    line-height: 1.8;
-}
-
-.right-column h3{
-    font-family: poppinsBold;
-
-    margin-top: 20px;
-    margin-bottom: 10px;
-}
-
-.right-column ul{
-    padding-left: 30px;
-    margin-top: 10px;
-}
-
-.right-column ul li{
-    font-family: bricolage;
-
-    font-size: 18px;
-    line-height: 1.5;
-
-    margin-bottom: 18px;
-}
-.event-registration-card {
-    width: 100%;
-    max-width: 500px;
-    background: #fff;
-    padding: 25px;
-    border-radius: 15px;
-    border: 1px solid #ddd;
-    transition: all 0.3s ease;
-}
-
-.ticket-content {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-}
-
-.ticket-user-card {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.ticket-user-avatar {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #d8d8d8;
-}
-
-.ticket-user-info h3 {
-    font-size: 20px;
-    margin: 0 0 6px;
-}
-
-.ticket-user-email,
-.ticket-user-message {
-    margin: 0;
-    color: #5f5f5f;
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-.ticket-user-message {
-    margin-top: 8px;
-    color: #333;
-    font-weight: 600;
-}
-
-/* Modifiers para sa status */
-.event-registration-card.pending {
-    border: 2px dashed #f39c12;
-}
-.event-registration-card.approved {
-    border: 2px solid #27ae60;
-}
-.event-registration-card.declined {
-    border: 2px solid #c0392b;
-}
-
-.ticket-profile {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
+/* ==========================================================================
+   TICKET DASHBOARD VIEW INFOMODAL
+   ========================================================================== */
 #ticketModal {
-    display: none; 
+    display: none;
     position: fixed;
-    z-index: 2000; /* Mas mataas dapat sa registration modal (.req) */
+    z-index: 2000;
     top: 0; left: 0;
     width: 100%; height: 100%;
     background: rgba(0,0,0,0.6);
@@ -808,180 +451,49 @@ hr{
     justify-content: center;
     align-items: center;
 }
-#ticketModal.open {
-    display: flex;
-}
-.ticket-label {
-    background: #999;
-    color: white;
-    padding: 2px 8px;
-    border-radius: 5px;
-    font-size: 10px;
-    font-weight: bold;
-}
-.ticket-label h2{
-    font-family: bricolage;
-}
-.event-details{
-    font-family: poppins;
-    font-size: 11px;
-    color: #6b6b6b;
-}
-.guest-info p{
-    font-family: poppins;
-    font-size: 12px;
-    color: #6b6b6b;
-}
-.modal-content {
+#ticketModal.open { display: flex; }
+.ticket-modal-inner {
     background: #fff;
-    padding: 25px;
+    padding: 28px;
     border-radius: 20px;
-    width: 350px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    font-family: sans-serif;
-    gap: 25px;
-   
+    width: 360px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    position: relative;
 }
-.modal-close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    cursor: pointer;
-    font-size: 24px;
+.ticket-modal-close { position: absolute; top: 14px; right: 16px; cursor: pointer; font-size: 22px; color: #888; }
+.ticket-modal-header { border-bottom: 1px solid #eee; padding-bottom: 12px; margin-bottom: 16px; }
+.ticket-label { background: #004d20; color: white; padding: 2px 8px; border-radius: 5px; font-size: 10px; font-weight: bold; display: inline-block; }
+.ticket-modal-header h2 { font-size: 17px; margin: 8px 0 4px; }
+.event-details { font-size: 11px; color: #777; line-height: 1.5; }
+.ticket-modal-body { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.ticket-modal-avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; }
+.ticket-modal-info strong { font-size: 14px; }
+.ticket-modal-info p { font-size: 12px; color: #666; margin: 2px 0; }
+.ticket-status-badge-inline { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; margin-top: 4px; }
+.badge-going { background: #d4edda; color: #155724; }
+.badge-not-going { background: #f8d7da; color: #721c24; }
+.badge-approved { background: #e2eafc; color: #3b5998; }
+
+.ticket-modal-attendance { border-top: 1px solid #eee; padding-top: 14px; }
+.ticket-modal-attendance p { font-size: 12px; color: #666; margin-bottom: 8px; }
+.attendance-btn-row { display: flex; gap: 8px; }
+.btn-going-select, .btn-not-going-select {
+    flex: 1; padding: 8px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; background: #fff; transition: all 0.2s;
 }
-#ticketDetails {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    font-family: sans-serif; /* Palitan mo ng font na gamit mo */
-}
-#ticketDetails h3 {
-    font-family: 'bricolage', sans-serif;
-    color: #004d20;
-    margin-bottom: 10px;
-}
-#ticketDetails img {
-    width: 120px !important;
-    height: 120px !important;
-    border-radius: 50%;
-    object-fit: cover;
-    margin: 10px 0;
-    marging
-}
-#ticketDetails button {
-    background-color: #77b800;
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    margin-top: 15px;
-}
-.ticket-body {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin: 20px 0;
-}
-.guest-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-   
-}
-.status-badge {
-    background: #d4edda;
-    color: #155724;
-    padding: 4px 10px;
-    border-radius: 15px;
-    font-size: 12px;
-}
-.ticket-footer {
-    display: flex;
-    gap: 10px;
-    border-top: 1px solid #eee;
-    padding-top: 20px;
-}
-.btn-directions { background: #f8f9fa; border: 1px solid #ddd; border-radius: 8px; padding: 10px; flex: 1; }
-.btn-save { background: #9b82e0; color: white; border: none; border-radius: 8px; padding: 10px; flex: 1.5; }
-/* =========================
-   RESPONSIVE
-========================= */
+.btn-going-select { border: 1px solid #1a8a3e; color: #1a8a3e; }
+.btn-going-select:hover, .btn-going-select.active { background: #1a8a3e; color: #fff; }
+.btn-not-going-select { border: 1px solid #c0392b; color: #c0392b; }
+.btn-not-going-select:hover, .btn-not-going-select.active { background: #c0392b; color: #fff; }
+
+.ticket-modal-footer { display: flex; gap: 8px; margin-top: 14px; }
+.btn-ticket-directions { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; background: #f8f9fa; font-size: 12px; cursor: pointer; }
+.btn-ticket-save { flex: 1.5; padding: 10px; background: #6c5ce7; border: none; border-radius: 8px; color: white; font-size: 12px; cursor: pointer; font-weight: 600; }
+
+/* ==========================================================================
+   RESPONSIVE LAYOUT BREAKPOINTS
+   ========================================================================== */
 @media(max-width: 1150px){
-    .hero-content,
-    .main-content{
-        width: 90%;
-        flex-direction: column;
-        gap: 50px;
-    }
-    .hero-left,
-    .right-side,
-    .left-column,
-    .right-column{
-        width: 100%;
-    }
-    .hero-left img{
-        width: 100%;
-        height: auto;
-    }
-}
-@media(max-width: 900px){
-    .req-inner{
-        width: 95%;
-        padding: 20px;
-    }
-    .popup-body{
-        flex-direction: column;
-    }
-    .popup-left,
-    .popup-right{
-        width: 100%;
-    }
-    .popup-left img{
-        height: 250px;
-    }
-    .popup-header h2{
-        font-size: 34px;
-    }
-    .form-row,
-    .form-row-3{
-        flex-direction: column;
-    }
-}
-@media(max-width: 768px){
-    nav{
-        flex-direction: column;
-        gap: 20px;
-    }
-    nav ul{
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    .right-side h1{
-        font-size: 45px;
-    }
-    .people{
-        flex-direction: column;
-        gap: 20px;
-    }
-    .event-info{
-        flex-direction: column;
-    }
-    .ticket-card{
-        width: 100%;
-        height: auto;
-        min-height: 520px;
-    }
-    .popup-header h2{
-        font-size: 28px;
-    }
-    .section-title{
-        font-size: 20px;
-    }
-    .submit-btn{
-        font-size: 18px;
-    }
+    .hero-content, .main-content { width: 90%; flex-direction: column; gap: 50px; }
+    .hero-left, .right-side, .left-column, .right-column { width: 100%; }
+    .hero-left img { width: 100%; height: auto; }
 }

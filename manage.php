@@ -126,10 +126,10 @@ if (isset($_SESSION['user_id'])) {
         $res = $stmt->get_result();
         while ($ev = $res->fetch_assoc()) {
             $eid = $ev['id'];
-            $title = htmlspecialchars($ev['title'] ?? '');
-            $desc = htmlspecialchars($ev['description'] ?? '');
+            $title = htmlspecialchars($ev['title']);
+            $desc = htmlspecialchars($ev['description']);
             $banner = !empty($ev['event_banner']) ? htmlspecialchars($ev['event_banner']) : 'images/stardew.png';
-            $venue = htmlspecialchars($ev['venue'] ?? '');
+            $venue = htmlspecialchars($ev['venue']);
             $start = new DateTime($ev['start_datetime']);
             $end = new DateTime($ev['end_datetime']);
             $dateStr = $start->format('F j, Y');
@@ -160,3 +160,6 @@ if (isset($_SESSION['user_id'])) {
     }
     ?>
     </div>
+  </div>
+</body>
+</html>
