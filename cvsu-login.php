@@ -13,6 +13,18 @@ $error_msg = '';
 $passwordClass = '';
 $passwordError = '';
 
+// Fetch user's profile picture from the database for the initial display avatar
+$profile_picture = 'images/person3.png'; // Fallback default image
+$avatar_stmt = $conn->prepare('SELECT profile_picture FROM users WHERE email = ? AND account_type = "cvsu" LIMIT 1');
+$avatar_stmt->bind_param('s', $email);
+$avatar_stmt->execute();
+$avatar_result = $avatar_stmt->get_result();
+if ($avatar_user = $avatar_result->fetch_assoc()) {
+    if (!empty($avatar_user['profile_picture'])) {
+        $profile_picture = htmlspecialchars($avatar_user['profile_picture']);
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
@@ -20,8 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $passwordError = 'Please enter your password.';
         $passwordClass = 'input-error-border';
     } else {
-        // Use new schema: `password` column and `account_type` field
-        $stmt = $conn->prepare('SELECT id, first_name, password, account_type FROM users WHERE email = ? AND account_type = "cvsu" LIMIT 1');
+        $stmt = $conn->prepare('SELECT id, first_name, password, account_type, profile_picture FROM users WHERE email = ? AND account_type = "cvsu" LIMIT 1');
         $stmt->bind_param('s', $email);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -33,11 +44,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['first_name'] = $user['first_name'];
             $_SESSION['role'] = 'cvsu';
             
+            if (!empty($user['profile_picture'])) {
+                $_SESSION['profile_picture'] = $user['profile_picture'];
+            }
+            
             // Check if user is a main admin or organization admin/moderator
             $_SESSION['is_admin'] = false;
             $_SESSION['admin_role'] = null;
             
-            // Check if user is a main admin of any organization
             $admin_check = $conn->prepare('SELECT id FROM organizations WHERE main_admin_id = ? LIMIT 1');
             $admin_check->bind_param('i', $user['id']);
             $admin_check->execute();
@@ -47,7 +61,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['is_admin'] = true;
                 $_SESSION['admin_role'] = 'main_admin';
             } else {
-                // Check if user is an organization admin or moderator
                 $org_admin_check = $conn->prepare('SELECT role FROM organization_admins WHERE user_id = ? LIMIT 1');
                 $org_admin_check->bind_param('i', $user['id']);
                 $org_admin_check->execute();
@@ -56,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($org_result->num_rows > 0) {
                     $org_admin = $org_result->fetch_assoc();
                     $_SESSION['is_admin'] = true;
-                    $_SESSION['admin_role'] = $org_admin['role']; // 'admin' or 'moderator'
+                    $_SESSION['admin_role'] = $org_admin['role'];
                 }
             }
             
@@ -72,13 +85,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cvsu Login Page</title>
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/cvsu-login.css">
+    
+    <style>
+        .form-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-bottom: 24px;
+        }
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Cvsu Login Page</title>
-        <link rel="stylesheet" href="css/navbar.css">
-        <link rel="stylesheet" href="css/cvsu-login.css">
-    </head>
+        .avatar-container {
+            width: 90px;
+            height: 90px;
+            margin-bottom: 16px;
+            position: relative;
+            border-radius: 50%;
+            padding: 4px;
+            background: linear-gradient(135deg, #6da06f 0%, #4c8a59 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .avatar-container:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(76, 138, 89, 0.3);
+        }
+
+        .person3-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 2px solid #fff;
+            display: block;
+        }
+
+        .form-header h3 {
+            font-size: 22px;
+            color: #222;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+    </style>
+</head>
 
 <body class="login-bg"> 
     <nav>
@@ -102,10 +159,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </button>
             
             <div class="form-header">
-                <img src="images/person3.png" class="person3" alt="User avatar">
+                <div class="avatar-container">
+                    <img src="<?php echo $profile_picture; ?>" class="person3-avatar" alt="User avatar">
+                </div>
                 <h3>Welcome Back<?php echo $displayName ? ', ' . htmlspecialchars($displayName) : ''; ?></h3>
             
-            <div class="form-mail">
+                <div class="form-mail">
                     <img src="images/mail.png" class="mail" alt="Mail icon">
                     <p><?php echo htmlspecialchars($email); ?></p>
                 </div>
@@ -131,4 +190,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </body>
 </html>
-                
