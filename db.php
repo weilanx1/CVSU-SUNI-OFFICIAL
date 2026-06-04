@@ -1,7 +1,7 @@
 <?php
 // db.php - This file connects your PHP website code to your MySQL database
 
-$host = "127.0.0.1:3308";
+$host = "localhost";
 $user = "root";
 $password = ""; // Default WAMP password is completely empty/blank
 $dbname = "suni_db"; // The database we just made in your terminal

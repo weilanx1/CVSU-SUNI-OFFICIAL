@@ -85,34 +85,24 @@ if (isset($_SESSION['user_id'])) {
   </div>
 
   <div class="main">
-    <nav>
+      <nav>
         <div class="container nav-container">
+            <a href="#">
+                <img src="images/logo.png" alt="Suni Logo" style="display:none;">
+            </a>
             <ul>
-                <li><a href="create-events.php">+ Create Event</a></li>
+                <li><a href="create-events.php">+ Create Events</a></li>
                 <li><a href="index.php">CvSU Events</a></li>
-                <li><a href="Myprofile.php">My Profile</a></li>
+                <li><a href="#">My Profile</a></li>
                 <li><a href="dashboard.php" class="active">Organization Dashboard</a></li>
                 <li class="nav-icons">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <i class="fa-regular fa-bell fa-lg"></i>
                 </li>
-                <li class="profile-dropdown-wrapper">
-                    <img src="<?php echo $profile_picture; ?>" class="profile" id="profileBtn" alt="Profile" style="cursor:pointer; width:40px; height:40px; border-radius:50%; object-fit:cover;">
-                    
-                    <div class="profile-dropdown-menu" id="profileMenu">
-                        <div class="dropdown-user-details">
-                            <p><?php echo htmlspecialchars($user_name); ?></p>
-                            <span><?php echo htmlspecialchars($user_email); ?></span>
-                        </div>
-                        <hr>
-                        <a href="logout.php" class="sign-out-item"><i class="fa-solid fa-right-from-bracket" style="margin-right:10px;"></i> Sign Out</a>
-                    </div>
-                </li>
+                <li><img src="<?php echo $profile_picture; ?>" class="profile"></li>
             </ul>
         </div>
     </nav>
-  </div>
-
   <script>
     // JS para sa Dropdown toggle
     const profileBtn = document.getElementById('profileBtn');

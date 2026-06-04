@@ -29,7 +29,7 @@ body {
 }
 
 /* ==========================================================================
-    HERO (MAIN) BANNER SECTION - EXACT ALIGNMENT FIX
+    HERO (MAIN) BANNER SECTION
    ========================================================================== */
 .main {
     width: 100%;
@@ -55,23 +55,22 @@ body {
     z-index: 1;
 }
 
-/* Tinitiyak na ang inner content ay laging kalkulado sa gitna patayo */
 .main .container {
     height: 100%;
     display: flex;
-    align-items: center;     
-    justify-content: flex-start; /* Ibinalik sa KALIWA ang posisyon ng buong text container */
+    align-items: center;
+    justify-content: flex-start;
     z-index: 2;
     padding-left: 130px;
 }
 
 .main-content {
-    max-width: 550px;        /* Ibinalik sa orihinal na 550px para sakto ang haba ng linya sa 1st pic */
+    max-width: 550px;
     color: white;
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Tinitiyak na nakalinya sa KALIWA ang lahat ng sub-elements */
-    text-align: left;        /* Ibinalik sa left-align ang simula ng mga letra */
+    align-items: flex-start;
+    text-align: left;
 }
 
 .participants {
@@ -84,15 +83,13 @@ body {
     opacity: 0.9;
 }
 
-/* INAYOS NA H1: May line-clamp para hindi itulak ang buttons pababa */
 .main-content h1 {
-    font-size: 51px; 
+    font-size: 51px;
     font-weight: 700;
     margin-bottom: 15px;
-    line-height: 1.2;    /* Mas pinagdikit para compact tingnan */
-    
+    line-height: 1.2;
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* Maximum na 2 linya para sakto sa vertical height budget ng 500px banner */
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -105,7 +102,7 @@ body {
 }
 
 .organization {
-    font-size: 14.5px; 
+    font-size: 14.5px;
     font-weight: 500;
     margin-bottom: 22px;
 }
@@ -117,18 +114,19 @@ body {
 }
 
 .join-btn {
-    border: 1px solid rgba(255, 255, 255, 0.35); 
+    border: 1px solid rgba(255, 255, 255, 0.35);
     padding: 9px 35px;
-    background: rgba(255, 255, 255, 0.2); 
-    backdrop-filter: blur(10px); 
-    -webkit-backdrop-filter: blur(10px); 
-    border-radius: 25px; 
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 25px;
     font-size: 15px;
     font-weight: 600;
-    color: #ffffff; 
+    color: #ffffff;
     cursor: pointer;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); 
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     transition: background 0.3s ease, transform 0.2s ease;
+    text-decoration: none;
 }
 
 .join-btn:hover {
@@ -191,7 +189,7 @@ body {
 }
 
 .org-card img {
-    width: auto; 
+    width: auto;
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
@@ -200,14 +198,14 @@ body {
 }
 
 .org-card p {
-    font-size: 11px; 
+    font-size: 11px;
     color: #555;
     line-height: 1.3;
     font-weight: 500;
 }
 
 /* ==========================================================================
-    PRIMARY EVENTS GRID SECTION (POPULAR EVENTS)
+    PRIMARY EVENTS GRID (POPULAR EVENTS) — cards with info BELOW image
    ========================================================================== */
 .events-section {
     padding: 10px 0 35px 0;
@@ -242,72 +240,172 @@ body {
     gap: 15px;
 }
 
+/* Card wrapper — no overflow:hidden so info below is visible */
 .event-card {
     width: 100%;
-    aspect-ratio: 1 / 1; 
-    border-radius: 8px;
-    overflow: hidden; /* CRITICAL: Para hindi lumagpas ang image kapag nag-zoom */
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    overflow: visible;
     position: relative;
     cursor: pointer;
-    background: #000;
-    transition: box-shadow 0.3s ease-in-out;
+    background: transparent;
+    text-decoration: none;
+    color: inherit;
 }
 
-/* Shadow effect para sa Popular Events card pagkahover */
-.event-card:hover {
+/* Square image container */
+.event-card .card-image-wrap {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    background: #000;
+    transition: box-shadow 0.3s ease;
+}
+
+.event-card:hover .card-image-wrap {
     box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
 }
 
-.event-card img {
+.event-card .card-image-wrap img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1); /* Swabeng animation */
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    display: block;
 }
 
-/* Zoom in effect ng larawan */
-.event-card:hover img {
-    transform: scale(1.06); 
+.event-card:hover .card-image-wrap img {
+    transform: scale(1.06);
 }
 
-.event-overlay {
+/* Dark overlay on hover */
+.event-card .card-hover-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    color: white;
-    opacity: 0; /* Nakatago sa simula */
-    transition: opacity 0.3s ease-in-out; 
+    background: rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    transition: opacity 0.3s ease;
     z-index: 2;
 }
 
-.event-card:hover .event-overlay {
+.event-card:hover .card-hover-overlay {
     opacity: 1;
 }
 
-.event-top {
-    display: flex;
-    justify-content: space-between;
+/* Guest count badge — top left, hides on hover */
+.event-card .card-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 3px 9px;
+    border-radius: 50px;
     font-size: 10px;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: opacity 0.2s ease;
 }
 
-.event-title {
-    font-size: 18px; 
+.event-card:hover .card-badge {
+    opacity: 0;
+}
+
+/* Visibility badge — top right, hides on hover */
+.event-card .card-visibility {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.45);
+    color: white;
+    padding: 3px 9px;
+    border-radius: 50px;
+    font-size: 10px;
+    backdrop-filter: blur(4px);
+    z-index: 4;
+    transition: opacity 0.2s ease;
+}
+
+.event-card:hover .card-visibility {
+    opacity: 0;
+}
+
+/* Join Event glass button — centered, appears on hover */
+.event-card .card-join-btn {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translate(-50%, 8px);
+    z-index: 5;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 7px 22px;
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s, color 0.2s;
+    white-space: nowrap;
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+}
+
+.event-card:hover .card-join-btn {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+.event-card .card-join-btn:hover {
+    background: rgba(255, 255, 255, 0.5);
+    color: #000;
+    transform: translate(-50%, -2px) scale(1.04);
+}
+
+/* Info BELOW the image */
+.event-card .card-info-below {
+    padding: 10px 4px 6px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.event-card .card-info-below .card-title {
+    font-size: 14px;
     font-weight: 700;
-    line-height: 1.2;
+    color: #111;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-.event-sub {
+.event-card .card-info-below .card-org {
     font-size: 11px;
-    opacity: 0.8;
+    color: #888;
+    font-weight: 500;
+}
+
+.event-card .card-info-below .card-date {
+    font-size: 11px;
+    color: #aaa;
+    font-weight: 400;
+    margin-top: 1px;
 }
 
 /* ==========================================================================
-    SECONDARY EVENTS SECTION (ORGANIZATION HOST / SCROLL CARDS)
-    * UNIFIED WITH POPULAR EVENTS (NO HTML STRUCTURE CHANGE) *
+    SECONDARY EVENTS SECTION (ORG SCROLL CARDS) — info BELOW image
    ========================================================================== */
 .org-host-header {
     display: flex;
@@ -380,21 +478,22 @@ body {
     display: flex;
     flex-direction: column;
     cursor: pointer;
-    position: relative; /* Anchor para sa nakalutang na text at glass button */
+    position: relative;
+    text-decoration: none;
+    color: inherit;
 }
 
 .card-media {
     width: 100%;
     aspect-ratio: 1 / 1;
-    border-radius: 8px;
-    overflow: hidden; 
+    border-radius: 10px;
+    overflow: hidden;
     position: relative;
     background: #000;
-    transition: box-shadow 0.3s ease-in-out;
+    transition: box-shadow 0.3s ease;
     z-index: 1;
 }
 
-/* Shadow effect para sa Scroll Card pagkahover (Same as Popular) */
 .scroll-card:hover .card-media {
     box-shadow: 0 12px 25px rgba(0, 0, 0, 0.35);
 }
@@ -406,74 +505,107 @@ body {
     transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* Zoom in effect para sa Scroll Cards (Same as Popular) */
 .scroll-card:hover .card-media img {
     transform: scale(1.06);
 }
 
-/* GUEST COUNT BADGE (Kita sa simula, mawawala kapag hinohover) */
+/* Dark overlay via pseudo-element */
+.card-media::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.42);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+}
+
+.scroll-card:hover .card-media::after {
+    opacity: 1;
+}
+
+/* Badge — visible by default, hides on hover */
 .card-badge {
     position: absolute;
     top: 10px;
     left: 10px;
     background: rgba(0, 0, 0, 0.5);
     color: white;
-    padding: 3px 8px;
+    padding: 3px 9px;
     border-radius: 50px;
     font-size: 10px;
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     z-index: 5;
-    opacity: 1; 
-    visibility: visible;
+    display: flex;
+    align-items: center;
+    gap: 4px;
     transition: opacity 0.2s ease, visibility 0.2s;
 }
 
-/* VIEW EVENT GLASS BUTTON SETUP */
+.scroll-card:hover .card-badge {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Join Event glass button */
 .card-join-glass {
     position: absolute;
-    bottom: 12px;
+    bottom: 14px;
     left: 50%;
     z-index: 4;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 5px 16px;
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border-radius: 15px;
-    font-size: 11px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 7px 22px;
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 20px;
+    font-size: 12px;
     font-weight: 600;
-    color: white;
+    color: #fff;
     cursor: pointer;
     opacity: 0;
     transform: translate(-50%, 10px);
     transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s, color 0.2s;
+    font-family: 'Poppins', sans-serif;
 }
 
-/* POSITION MAGIC TRICK: Hinihila ang text paitaas sa loob ng image */
+.scroll-card:hover .card-join-glass {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+.card-join-glass:hover {
+    background: rgba(255, 255, 255, 0.5) !important;
+    color: #000 !important;
+    transform: translate(-50%, -2px) scale(1.04) !important;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+    z-index: 6;
+}
+
+.card-join-glass:active {
+    transform: translate(-50%, 0) scale(0.98) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Info BELOW the image (static, not absolute) */
 .card-info {
-    padding: 15px;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    
-    /* Naglalagay ng gradient backdrop sa loob ng image container */
-    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 70%, transparent 100%);
-    border-radius: 0 0 8px 8px; 
-    
-    opacity: 0; /* Nakatago sa simula (Same as Popular) */
-    z-index: 3; 
-    transform: translateY(10px);
-    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    position: static;
+    background: transparent;
+    padding: 10px 4px 6px 4px;
+    opacity: 1;
+    transform: none;
+    transition: none;
+    border-radius: 0;
+    z-index: auto;
 }
 
 .card-info h3 {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
-    color: #fff; /* Puti na ang kulay para mabasa sa dark overlay */
-    line-height: 1.2;
-    margin-bottom: 35px; /* Lumilikha ng sakto at sapat na patlang para sa Glass Button sa ilalim */
+    color: #111;
+    line-height: 1.3;
+    margin-bottom: 2px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -483,49 +615,14 @@ body {
 
 .card-date {
     font-size: 11px;
-    color: rgba(255, 255, 255, 0.75);
-    font-weight: 500;
-}
-
-/* ──── HOVER INTERACTIONS CONTROL PARA SA SCROLL CARD ──── */
-
-/* 1. Tinatanggal nang tuluyan ang guest count badge */
-.scroll-card:hover .card-badge {
-    opacity: 0;
-    visibility: hidden;
-}
-
-/* 2. Pinapalabas at pinapaangat ang text details */
-.scroll-card:hover .card-info {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* 3. Pinapalabas ang View Event Glass Button */
-.scroll-card:hover .card-join-glass {
-    opacity: 1;
-    transform: translate(-50%, 0); 
-}
-
-/* INTERACTIVE STATES PARA SA VIEW EVENT GLASS BUTTON PAG KAHUVER */
-.card-join-glass:hover {
-    background: rgba(255, 255, 255, 0.5) !important;
-    border-color: rgba(255, 255, 255, 0.7) !important;
-    color: #000000 !important;                          
-    transform: translate(-50%, -2px) scale(1.05) !important; 
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);   
-    z-index: 6; 
-}
-
-.card-join-glass:active {
-    transform: translate(-50%, 0) scale(0.98) !important; 
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    color: #aaa;
+    font-weight: 400;
 }
 
 .scroll-arrow-right {
     position: absolute;
     right: -18px;
-    top: 50%;
+    top: 40%;
     transform: translateY(-50%);
     width: 36px;
     height: 36px;
@@ -542,7 +639,7 @@ body {
 }
 
 /* ==========================================================================
-    PROFILE DROPDOWN WRAPPER SYSTEM (PROTECTED)
+    PROFILE DROPDOWN
    ========================================================================== */
 .profile-dropdown-wrapper {
     position: relative;
@@ -557,11 +654,11 @@ body {
     top: 50px;
     background-color: #ffffff;
     min-width: 260px;
-    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1); 
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
     border-radius: 12px;
     z-index: 9999;
     padding: 15px 0;
-    border: 1px solid #e2e8f0; 
+    border: 1px solid #e2e8f0;
     font-family: 'Poppins', sans-serif;
 }
 
@@ -580,7 +677,7 @@ body {
     margin: 0;
     font-size: 14px;
     font-weight: 700;
-    color: #1e293b; 
+    color: #1e293b;
 }
 
 .dropdown-user-details span {
@@ -610,17 +707,17 @@ body {
 }
 
 .profile-dropdown-menu a.sign-out-item {
-    color: #000000 !important; 
+    color: #000000 !important;
     margin-top: 5px;
 }
 
 .profile-dropdown-menu a.sign-out-item:hover {
-    background-color: #f8fafc !important; 
-    color: #000000 !important;              
-}    
+    background-color: #f8fafc !important;
+    color: #000000 !important;
+}
 
 /* ==========================================================================
-    RESPONSIVE MEDIA QUERIES
+    RESPONSIVE
    ========================================================================== */
 @media(max-width: 1024px) {
     .event-grid, .event-grid-scroll {
