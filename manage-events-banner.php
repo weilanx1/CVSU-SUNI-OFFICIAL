@@ -186,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['event_id']) && $org_i
       <a href="manage-events.php?event_id=<?php echo $event ? intval($event['id']) : ''; ?>" class="tab-item">Details</a>
       <a href="manage-events-banner.php?event_id=<?php echo $event ? intval($event['id']) : ''; ?>" class="tab-item active">Banner</a>
       <a href="manage-events-guest.php?event_id=<?php echo $event ? intval($event['id']) : ''; ?>" class="tab-item">Guest</a>
-      <a href="#" class="tab-item">Registration</a>
+      <a href="manage-events-registration.php?event_id=<?php echo $event ? intval($event['id']) : ''; ?>" class="tab-item">Registration</a>
     </div>
 
     <!-- Form container area ready for image upload operations -->

@@ -1,0 +1,697 @@
+/* ==========================================================================
+   1. ORIGINAL STYLES & BASE LAYOUT CONTEXT
+   ========================================================================== */
+@font-face {
+  font-family: poppins;
+  src: url("../font/Poppins/Poppins-Regular.ttf");
+  font-weight: 400;
+  font-style: normal;
+}
+* {
+  font-family: poppins;
+  box-sizing: border-box; /* Pinapanatiling tama ang sukat ng padding/inputs */
+}
+body {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden; 
+    font-family: 'Poppins', sans-serif;
+}
+.sidebar {
+    width: 240px;
+    height: 100vh;
+    flex-shrink: 0; 
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.main {
+    flex: 1; 
+    height: 100vh;
+    overflow-y: auto; 
+    display: flex;
+    flex-direction: column;
+}
+.contents {
+    margin-left: 40px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: calc(100vh - 80px);
+    overflow-y: auto; 
+    padding-right: 10px;
+}
+.contents::-webkit-scrollbar {
+    width: 6px;
+}
+.contents::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+.content-tabs,
+.manage-card {
+    max-width: 850px; 
+    width: 100%;
+}
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #1e293b;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+.page-title {
+    font-size: 18px; 
+    font-weight: 700;
+    margin: 0 0 2px 0;
+    color: #1e293b;
+}
+.page-subtitle {
+    color: #64748b;
+    font-size: 12px;
+    margin: 0 0 14px 0;
+}
+.content-tabs {
+    display: flex;
+    gap: 24px;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 16px; 
+}
+.tab-item {
+    text-decoration: none;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 500;
+    padding-bottom: 6px;
+    position: relative;
+}
+.tab-item.active {
+    color: #000000;
+    font-weight: 600;
+}
+.tab-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: #000000;
+}
+.registration-main-container { max-width: 850px; margin: 20px 0; }
+
+/* ==========================================================================
+   2. CLICKABLE TOP STATUS CARDS
+   ========================================================================== */
+.status-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 16px;            
+    margin-bottom: 24px;  
+}
+
+.status-card-clickable {
+    background: #e8f5e9;
+    padding: 12px 16px;   
+    border-radius: 10px;  
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;             
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    box-sizing: border-box;
+    min-height: 54px;    
+}
+
+.status-card-clickable:hover {
+    background: #d4edd9;
+}
+
+.status-card-clickable:active {
+    transform: scale(0.99);
+}
+
+.status-card-label {
+    font-size: 11px;      
+    color: #64748b;
+    font-weight: 500;    
+}
+
+.status-card-value {
+    font-size: 14px;     
+    color: #1e293b;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* ==========================================================================
+   3. INTERACTIVE TICKETS ROW COMPONENT
+   ========================================================================== */
+.tickets-section {
+    margin-bottom: 30px;
+}
+
+.tickets-section h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+    color: #1e293b;
+}
+
+.ticket-card-container { 
+    background: #e8f5e9; 
+    border: 1px solid #dcedd5; 
+    padding: 15px 20px; 
+    border-radius: 8px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    box-sizing: border-box;
+}
+
+/* ==========================================================================
+   4. QUESTIONS SECTIONS LAYOUT CONTROL
+   ========================================================================== */
+.question-list-row {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    margin-top: 16px;
+    margin-bottom: 30px;
+    width: 100%;
+    max-width: 850px;
+    overflow: visible !important; 
+}
+.question-card-item {
+    flex: 1; 
+    background: #f7fcf9; 
+    border: 1px solid #dcedd5; 
+    border-radius: 14px; 
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 56px;
+    box-sizing: border-box;
+    position: relative;
+    overflow: visible !important;
+}
+.card-left-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.card-left-content .icon-span {
+    font-size: 14px;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card-left-content .label-span {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1e293b;
+}
+.badge-required { 
+    color: #2e7d32; 
+    font-size: 12px; 
+    font-weight: 600; 
+    background: #e8f5e9; 
+    padding: 6px 14px; 
+    border-radius: 20px; 
+}
+.custom-questions-divider {
+    margin-top: 40px;
+}
+.section-desc {
+    color: #64748b;
+    font-size: 13px;
+    margin: 4px 0 16px 0;
+}
+.add-question-btn { 
+    background: #f7fcf9; 
+    border: 2px dashed #dcedd5; 
+    padding: 15px; 
+    width: 100%; 
+    border-radius: 12px; 
+    cursor: pointer; 
+    font-size: 13px;
+    font-weight: 500;
+    color: #2e7d32;
+    transition: all 0.2s ease;
+}
+.add-question-btn:hover {
+    background: #e8f5e9;
+    border-color: #2e7d32;
+}
+
+/* ==========================================================================
+   5. DROPDOWN ENGINES (Luma & Ticket App Dropdowns)
+   ========================================================================== */
+.custom-luma-dropdown, .custom-app-dropdown {
+    position: relative;
+}
+.custom-luma-dropdown {
+    margin-left: auto; 
+}
+.luma-selected-trigger, .dropdown-selected-trigger {
+    background-color: transparent !important; 
+    border: none !important;                                    
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;                                                 
+}
+.luma-selected-trigger {
+    padding: 6px 0 6px 12px;               
+    font-weight: 500;
+    color: #64748b;                                                          
+    transition: color 0.15s ease;
+}
+.dropdown-selected-trigger {
+    font-weight: 600;
+    color: #2e7d32;
+}
+.luma-selected-trigger:hover { color: #1e293b; }
+.custom-luma-dropdown.active .luma-selected-trigger { color: #1e293b; }
+
+.luma-caret, .dropdown-caret {
+    font-size: 10px;
+    transition: transform 0.2s ease;
+}
+.luma-caret { color: #64748b; }
+.dropdown-caret { color: #2e7d32; }
+
+.custom-luma-dropdown.active .luma-caret,
+.custom-app-dropdown.active .dropdown-caret {
+    transform: rotate(180deg);
+}
+
+.luma-dropdown-menu, .dropdown-menu-panel {
+    position: absolute;
+    right: 0;                                
+    background-color: #ffffff;                
+    border: 1px solid #e2e8f0;                
+    padding: 6px;
+    margin: 0;
+    z-index: 100000;
+    display: none;
+    list-style: none !important;
+}
+.luma-dropdown-menu {
+    top: calc(100% + 6px);
+    width: 190px;
+    border-radius: 14px;                      
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 16px -6px rgba(0, 0, 0, 0.05);
+}
+.dropdown-menu-panel {
+    top: calc(100% + 8px);
+    width: 180px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.custom-luma-dropdown.active .luma-dropdown-menu,
+.custom-app-dropdown.active .dropdown-menu-panel {
+    display: block !important;
+}
+
+.luma-dropdown-menu li, .dropdown-menu-panel li {
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #1e293b;                                                           
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    margin: 2px 0 !important;
+}
+.luma-dropdown-menu li { border-radius: 10px; }
+.dropdown-menu-panel li { border-radius: 8px; }
+
+.luma-dropdown-menu li:hover, .dropdown-menu-panel li:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+}
+.luma-dropdown-menu li.selected, .dropdown-menu-panel li.selected {
+    background-color: #e8f5e9 !important;    
+    color: #2e7d32 !important;                
+    font-weight: 500;
+}
+
+.luma-check-icon, .dropdown-check-icon {
+    font-size: 11px;
+    color: #2e7d32;
+}
+.luma-check-icon { opacity: 0; transition: opacity 0.1s ease; }
+.luma-dropdown-menu li.selected .luma-check-icon { opacity: 1; }
+
+.dropdown-check-icon { display: none; }
+.dropdown-menu-panel li.selected .dropdown-check-icon { display: inline-block; }
+
+/* ==========================================================================
+   6. GLOBAL APP OVERLAYS & MODALS BASE (iOS Style Clean Blueprint)
+   ========================================================================== */
+.app-modal-backdrop {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.3); /* Slate tint drop window effect */
+    backdrop-filter: blur(4px); /* Pinaswabe ang translucent backdrop view */
+    z-index: 2000000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.app-modal-backdrop.show {
+    display: flex;
+    opacity: 1;
+}
+
+.app-modal-content {
+    background-color: #ffffff; 
+    color: #1e293b;            
+    width: 100%;
+    max-width: 420px; /* Mas pinalaki nang kaunti para magkasya ang custom buttons side-by-side */
+    border-radius: 16px;       
+    border: 1px solid #e2e8f0; 
+    padding: 24px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+    transform: scale(0.96);
+    transition: transform 0.2s ease;
+}
+
+.app-modal-backdrop.show .app-modal-content {
+    transform: scale(1);
+}
+
+.modal-icon-header {
+    width: 40px;
+    height: 40px;
+    background: #e8f5e9;       
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #2e7d32;            
+    margin-bottom: 16px;
+}
+
+.app-modal-content h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: #1e293b;
+}
+
+.modal-description {
+    font-size: 13px;
+    color: #64748b;            
+    line-height: 1.45;
+    margin: 0 0 20px 0;
+}
+
+.modal-description.sub-desc {
+    margin-top: -12px;
+    margin-bottom: 20px;
+}
+
+.modal-form-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1e293b;
+}
+
+.modal-form-row.input-row {
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    margin: 2px 0;
+}
+
+.app-modal-number-input, .modal-text-input {
+    background: #f1f5f9;       
+    border: 1px solid #cbd5e1;
+    color: #1e293b;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+
+.app-modal-number-input {
+    padding: 6px 10px;
+    width: 60px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.modal-text-input {
+    padding: 10px 12px;
+    width: 100%;
+    font-size: 14px;
+}
+
+.app-modal-number-input:focus, .modal-text-input:focus {
+    outline: none;
+    border-color: #2e7d32;     
+    background: #ffffff;
+}
+
+.app-modal-btn-confirm {
+    width: 100%;
+    background: #2e7d32;       
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 16px;
+    font-family: 'Poppins', sans-serif;
+    transition: background-color 0.15s ease;
+}
+
+.app-modal-btn-confirm:hover { 
+    background: #1b5e20;       
+}
+
+.modal-header-with-close {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.modal-close-x-btn {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: #64748b;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    margin-top: -4px;
+    transition: color 0.2s ease;
+}
+.modal-close-x-btn:hover { color: #1e293b; }
+.modal-nav-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.modal-back-arrow-btn {
+    background: transparent;
+    border: none;
+    font-size: 14px;
+    color: #64748b;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 0.2s ease;
+}
+.modal-back-arrow-btn:hover { color: #1e293b; }
+.modal-nav-title { font-size: 15px; font-weight: 600; color: #1e293b; }
+
+.modal-icon-header.font-icon {
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 18px;
+}
+
+
+.question-types-grid.two-choices-only {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.type-selection-card.active-type {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1e293b;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+}
+.type-selection-card.active-type:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+    transform: translateY(-1px);
+}
+.type-selection-card .type-icon {
+    font-size: 16px;
+    color: #64748b;
+    width: 20px;
+    text-align: center;
+}
+
+/* Step 2 Configurator Box Banner Layout */
+.sub-profile-header {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 24px;
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #f1f5f9;
+}
+.sub-profile-icon {
+    width: 38px; height: 38px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: #475569; font-size: 15px;
+}
+.sub-profile-text h3 { font-size: 14px; font-weight: 600; margin: 0 0 2px 0; color: #1e293b; }
+.sub-profile-text p { font-size: 12px; color: #64748b; margin: 0; }
+
+.modal-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+    width: 100%;
+}
+.input-field-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Custom Native Dropdown Engine Inside Setup Card */
+.modal-select-wrapper { position: relative; width: 100%; }
+.modal-native-select {
+    appearance: none;
+    -webkit-appearance: none;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #1e293b;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    font-weight: 500;
+    width: 100%;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: border-color 0.2s ease;
+}
+.modal-native-select:focus { outline: none; border-color: #2e7d32; }
+.select-caret {
+    position: absolute; right: 14px; top: 50%;
+    transform: translateY(-50%); font-size: 11px;
+    color: #64748b; pointer-events: none;
+}
+
+.modal-hint-text {
+    font-size: 12px;
+    color: #64748b;
+    margin: -4px 0 20px 0;
+    line-height: 1.4;
+    font-style: italic;
+}
+
+.required-toggle-row {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 16px;
+    margin-bottom: 12px;
+}
+
+.app-modal-btn-confirm.target-add-btn {
+    margin-top: 8px;
+    background: #2e7d32; /* Nagiging luntian ang add button kung kailangan */
+}
+.app-modal-btn-confirm.target-add-btn:hover { background: #1b5e20; }
+
+/* ==========================================================================
+   8. iOS TOGGLE SLIDER CONTROL COMPONENT (In-Sync Track States)
+   ========================================================================== */
+.ui-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+.ui-toggle-switch input { 
+    opacity: 0; width: 0; height: 0;
+}
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #cbd5e1; 
+    transition: background-color 0.2s ease;
+    border-radius: 30px;
+}
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px; width: 18px;
+    left: 3px; bottom: 3px;
+    background-color: white;
+    transition: transform 0.2s ease;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+input:checked + .toggle-slider {
+    background-color: #22c55e; /* In-sync modern iOS green track state */
+}
+input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+}

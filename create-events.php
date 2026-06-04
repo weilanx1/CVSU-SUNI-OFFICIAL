@@ -77,6 +77,9 @@ if ($dept_res) {
         $dept_list[] = $row;
     }
 }
+
+// Inline SVG Black Canvas placeholder reference string
+$black_placeholder = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22450%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20fill%3D%22%23000000%22%2F%3E%3C%2Fsvg%3E';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -92,6 +95,71 @@ if ($dept_res) {
     <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+    <style>
+        .img-box {
+            position: relative;
+            background-color: #000000;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Bottom Right Upload Button Placement */
+        .modern-upload-btn {
+            position: absolute;
+            bottom: 14px;
+            right: 14px;
+            background: rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s ease-in-out;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            z-index: 10;
+        }
+
+        .modern-upload-btn:hover {
+            background: #ffffff;
+            color: #000000;
+            transform: scale(1.08);
+            border-color: #ffffff;
+        }
+
+        /* Top Right Remove Button Placement */
+        .remove-img-btn {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: rgba(231, 76, 60, 0.85); /* Smooth Red tint */
+            color: #ffffff;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: none; /* Controlled dynamically by JavaScript when an image exists */
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            z-index: 11;
+        }
+
+        .remove-img-btn:hover {
+            background: #c0392b;
+            transform: scale(1.1);
+        }
+    </style>
 </head>
 <body>
     <nav>
@@ -170,18 +238,32 @@ if ($dept_res) {
                     <h3>Event Image/Banner</h3>
                     <p>Upload or choose a banner for your event.</p>
                     <div class="img-box">
-                        <img src="images/stardew.png" class="display" id="eventBannerPreview" alt="Event Banner">
-                        <button type="button" class="img-add-btn" onclick="document.getElementById('event_banner_input').click();">➕</button>
-                        <input type="file" name="event_banner" id="event_banner_input" accept="image/*" style="display:none;" onchange="previewImage(this, 'eventBannerPreview')">
+                        <img src="<?php echo $black_placeholder; ?>" class="display" id="eventBannerPreview" alt="Event Banner">
+                        
+                        <button type="button" id="removeEventBannerBtn" class="remove-img-btn" onclick="clearImage('event_banner_input', 'eventBannerPreview', 'removeEventBannerBtn')">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+
+                        <button type="button" class="modern-upload-btn" onclick="document.getElementById('event_banner_input').click();">
+                            <i class="fa-solid fa-camera"></i>
+                        </button>
+                        <input type="file" name="event_banner" id="event_banner_input" accept="image/*" style="display:none;" onchange="previewImage(this, 'eventBannerPreview', 'removeEventBannerBtn')">
                     </div>
                 </div>
 
                 <div class="left-section-group" style="margin-top: 15px;">
                     <h3>Cover Image/Banner</h3>
                     <div class="img-box">
-                        <img src="images/stardew.png" class="cover" id="coverPhotoPreview" alt="Cover Photo">
-                        <button type="button" class="img-add-btn" onclick="document.getElementById('cover_photo_input').click();">➕</button>
-                        <input type="file" name="cover_photo" id="cover_photo_input" accept="image/*" style="display:none;" onchange="previewImage(this, 'coverPhotoPreview')">
+                        <img src="<?php echo $black_placeholder; ?>" class="cover" id="coverPhotoPreview" alt="Cover Photo">
+                        
+                        <button type="button" id="removeCoverPhotoBtn" class="remove-img-btn" onclick="clearImage('cover_photo_input', 'coverPhotoPreview', 'removeCoverPhotoBtn')">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+
+                        <button type="button" class="modern-upload-btn" onclick="document.getElementById('cover_photo_input').click();">
+                            <i class="fa-solid fa-camera"></i>
+                        </button>
+                        <input type="file" name="cover_photo" id="cover_photo_input" accept="image/*" style="display:none;" onchange="previewImage(this, 'coverPhotoPreview', 'removeCoverPhotoBtn')">
                     </div>
                 </div>
             </div>
@@ -317,14 +399,24 @@ if ($dept_res) {
 
     <script src="js/create-events.js"></script>
     <script>
-        function previewImage(input, previewId) {
+        // Holds global access string reference to default placeholder map view layout
+        const placeholderImg = '<?php echo $black_placeholder; ?>';
+
+        function previewImage(input, previewId, removeBtnId) {
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
                 reader.onload = function (e) {
                     document.getElementById(previewId).src = e.target.result;
+                    document.getElementById(removeBtnId).style.display = 'flex'; // Reveals remove button
                 };
                 reader.readAsDataURL(input.files[0]);
             }
+        }
+
+        function clearImage(inputId, previewId, removeBtnId) {
+            document.getElementById(inputId).value = ""; // Clear file choice tracking
+            document.getElementById(previewId).src = placeholderImg; // Revert layout to black canvas
+            document.getElementById(removeBtnId).style.display = 'none'; // Hide delete wrapper until next update
         }
     </script>
 </body>

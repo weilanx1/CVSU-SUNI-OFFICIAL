@@ -48,6 +48,7 @@ body {
     padding: 0 40px 32px 40px;
     margin-top: -60px;
     gap: 24px;
+    margin-left: 40px;
 }
 
 .profile-avatar-container {
