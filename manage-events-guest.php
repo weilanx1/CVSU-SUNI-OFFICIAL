@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
 
     if ($action === 'decline') {
         $upd = $conn->prepare(
-            "UPDATE registrations SET status='rejected', updated_at=NOW() WHERE id=?"
+            "UPDATE registrations SET status='rejected', attendance_confirmation='unconfirmed', updated_at=NOW() WHERE id=?"
         );
         $upd->bind_param('i', $reg_id);
         $upd->execute();
@@ -89,9 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
     }
 
     if ($action === 'update_status') {
-        $allowed_status = ['pending', 'approved', 'rejected', 'waitlisted'];
-        $allowed_attend = ['unconfirmed', 'going', 'not_going', 'cancelled'];
-        $set_parts = [];
+        $allowed_status      = ['pending', 'approved', 'rejected', 'waitlisted'];
+        $allowed_attend      = ['unconfirmed', 'going', 'not_going', 'cancelled'];
+        $attend_ignored_for  = ['pending', 'rejected', 'waitlisted'];
+        $set_parts  = [];
         $bind_types = '';
         $bind_vals  = [];
 
@@ -99,6 +100,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
             $set_parts[]  = 'status = ?';
             $bind_types  .= 's';
             $bind_vals[]  = $new_status;
+        }
+        // If the new status makes attendance irrelevant, force-reset it to unconfirmed
+        if ($new_status && in_array($new_status, $attend_ignored_for)) {
+            $new_attend = 'unconfirmed';
         }
         if ($new_attend && in_array($new_attend, $allowed_attend)) {
             $set_parts[]  = 'attendance_confirmation = ?';
@@ -123,25 +128,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['ajax_action'])) {
 }
 
 // ── Guest statistics ──────────────────────────────────────────────────────────
-$capacity = isset($event['capacity']) && $event['capacity'] > 0 ? intval($event['capacity']) : null;
+$capacity    = isset($event['capacity']) && $event['capacity'] > 0 ? intval($event['capacity']) : null;
 $cap_display = $capacity ? number_format($capacity) : 'Unlimited';
 
-$approved_count = 0;
 $s = $conn->prepare("SELECT COUNT(*) AS c FROM registrations WHERE event_id=? AND status='approved'");
 $s->bind_param('i', $event_id); $s->execute();
 $approved_count = intval($s->get_result()->fetch_assoc()['c']);
 
-$total_count = 0;
 $s = $conn->prepare("SELECT COUNT(*) AS c FROM registrations WHERE event_id=?");
 $s->bind_param('i', $event_id); $s->execute();
 $total_count = intval($s->get_result()->fetch_assoc()['c']);
 
-$going_count = 0;
 $s = $conn->prepare("SELECT COUNT(*) AS c FROM registrations WHERE event_id=? AND attendance_confirmation='going'");
 $s->bind_param('i', $event_id); $s->execute();
 $going_count = intval($s->get_result()->fetch_assoc()['c']);
 
-$pending_count = 0;
 $s = $conn->prepare("SELECT COUNT(*) AS c FROM registrations WHERE event_id=? AND status='pending'");
 $s->bind_param('i', $event_id); $s->execute();
 $pending_count = intval($s->get_result()->fetch_assoc()['c']);
@@ -263,12 +264,12 @@ function derive_display(array $r): array {
       <h2 class="page-title">Edit and Manage Event</h2>
       <p class="page-subtitle">Update your event details and settings.</p>
 
-      <!-- Sub-nav tabs — event_id carried on every tab so navigation never loses context -->
+      <!-- Sub-nav tabs -->
       <div class="content-tabs">
         <a href="manage-events.php?event_id=<?php echo $event_id; ?>"              class="tab-item">Details</a>
         <a href="manage-events-banner.php?event_id=<?php echo $event_id; ?>"       class="tab-item">Banner</a>
         <a href="manage-events-guest.php?event_id=<?php echo $event_id; ?>"        class="tab-item active">Guest</a>
-        <a href="manage-events-registration.php?event_id=<?php echo $event_id; ?>" class="tab-item"  data-text="Registration">Registration</a>
+        <a href="manage-events-registration.php?event_id=<?php echo $event_id; ?>" class="tab-item" data-text="Registration">Registration</a>
       </div>
 
       <div class="manage-card">
@@ -350,7 +351,6 @@ function derive_display(array $r): array {
                 $display    = derive_display($reg);
                 $time_label = friendly_time($reg['updated_at'] ?? '');
                 $is_pending = ($reg['status'] === 'pending');
-                // filter key: pending rows always go to 'pending' bucket; others use derive_display filter
                 $filter_key = $is_pending ? 'pending' : $display['filter'];
               ?>
               <div class="guest-row-item"
@@ -374,17 +374,17 @@ function derive_display(array $r): array {
 
                 <div class="guest-actions-cell">
                   <?php if ($is_pending): ?>
-                    <button class="btn-status btn-approve" onclick="handleApprove(this)">
+                    <button class="btn-status btn-approve" onclick="event.stopPropagation(); handleApprove(this)">
                       Approve <i class="fa-solid fa-check"></i>
                     </button>
-                    <button class="btn-status btn-decline" onclick="handleDecline(this)">
+                    <button class="btn-status btn-decline" onclick="event.stopPropagation(); handleDecline(this)">
                       Decline
                     </button>
                   <?php else: ?>
                     <span class="status-badge <?php echo $display['class']; ?>"><?php echo $display['label']; ?></span>
                     <span class="status-timestamp"><?php echo $time_label; ?></span>
                   <?php endif; ?>
-                  <button class="btn-more-options" onclick="openStatusModal(this)">
+                  <button class="btn-more-options" onclick="event.stopPropagation(); openStatusModal(this)">
                     <i class="fa-solid fa-ellipsis"></i>
                   </button>
                 </div>
@@ -435,197 +435,12 @@ function derive_display(array $r): array {
     </div>
   </div>
 
-<script>
-const EVENT_ID  = <?php echo $event_id; ?>;
-const CAP       = <?php echo $capacity ? intval($capacity) : 0; ?>;
-
-// ── AJAX helper ───────────────────────────────────────────────────────────────
-async function postAction(payload) {
-  const fd = new FormData();
-  Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
-  const res = await fetch('manage-events-guest.php?event_id=' + EVENT_ID, {
-    method: 'POST', body: fd
-  });
-  return res.json();
-}
-
-// ── Badge label/class map — keys must match DB values ────────────────────────
-const BADGE_MAP = {
-  going:       ['Going',     'badge-going'],
-  not_going:   ['Not Going', 'badge-not-going'],
-  cancelled:   ['Cancelled', 'badge-cancelled'],
-  approved:    ['Approved',  'badge-approved'],
-  rejected:    ['Declined',  'badge-declined'],
-  waitlisted:  ['Waitlist',  'badge-waitlist'],
-  pending:     ['Pending',   'badge-pending'],
-  unconfirmed: ['Approved',  'badge-approved'],  // approved but attendance not yet set
-};
-
-// Filter key derivation — mirrors PHP derive_display logic
-function deriveFilter(status, attend) {
-  if (attend === 'going')      return 'going';
-  if (attend === 'not_going')  return 'not_going';
-  if (attend === 'cancelled')  return 'cancelled';
-  if (status  === 'approved')  return 'approved';
-  if (status  === 'rejected')  return 'rejected';
-  if (status  === 'waitlisted')return 'waitlisted';
-  return 'pending';
-}
-
-function deriveBadge(status, attend) {
-  if (attend && attend !== 'unconfirmed') return BADGE_MAP[attend] || BADGE_MAP.pending;
-  return BADGE_MAP[status] || BADGE_MAP.pending;
-}
-
-// ── Rebuild a non-pending cell after action ───────────────────────────────────
-function rebuildCell(row, status, attend) {
-  const cell    = row.querySelector('.guest-actions-cell');
-  const moreBtn = document.createElement('button');
-  moreBtn.className = 'btn-more-options';
-  moreBtn.innerHTML = '<i class="fa-solid fa-ellipsis"></i>';
-  moreBtn.addEventListener('click', () => openStatusModal(moreBtn));
-
-  const [label, badgeClass] = deriveBadge(status, attend);
-  cell.innerHTML = '';
-  const badge = document.createElement('span');
-  badge.className = 'status-badge ' + badgeClass;
-  badge.textContent = label;
-  const ts = document.createElement('span');
-  ts.className = 'status-timestamp';
-  ts.textContent = 'Just now';
-  cell.appendChild(badge);
-  cell.appendChild(ts);
-  cell.appendChild(moreBtn);
-
-  row.dataset.status = status;
-  row.dataset.attend = attend;
-  row.dataset.filter = deriveFilter(status, attend);
-}
-
-// ── Approve ───────────────────────────────────────────────────────────────────
-function handleApprove(btn) {
-  const row   = btn.closest('.guest-row-item');
-  const regId = row.dataset.regId;
-  postAction({ ajax_action: 'approve', registration_id: regId }).then(r => {
-    if (!r.ok) { alert('Error: ' + (r.msg || 'Unknown')); return; }
-    rebuildCell(row, 'approved', 'unconfirmed');
-    updateGlanceCounts();
-    applyCurrentFilter();
-  });
-}
-
-// ── Decline ───────────────────────────────────────────────────────────────────
-function handleDecline(btn) {
-  const row   = btn.closest('.guest-row-item');
-  const regId = row.dataset.regId;
-  postAction({ ajax_action: 'decline', registration_id: regId }).then(r => {
-    if (!r.ok) { alert('Error: ' + (r.msg || 'Unknown')); return; }
-    rebuildCell(row, 'rejected', 'unconfirmed');
-    updateGlanceCounts();
-    applyCurrentFilter();
-  });
-}
-
-// ── Status modal ──────────────────────────────────────────────────────────────
-function openStatusModal(btn) {
-  const row = btn.closest('.guest-row-item');
-  document.getElementById('modalRegId').value        = row.dataset.regId;
-  document.getElementById('modalAvatar').src         = row.dataset.avatar;
-  document.getElementById('modalName').textContent   = row.dataset.fullname;
-  document.getElementById('modalEmail').textContent  = row.querySelector('.guest-email').textContent;
-  document.getElementById('statusSelect').value      = row.dataset.status  || 'pending';
-  document.getElementById('attendSelect').value      = row.dataset.attend  || 'unconfirmed';
-  document.getElementById('statusModal').classList.add('show');
-}
-
-document.getElementById('modalCloseBtn').addEventListener('click', () => {
-  document.getElementById('statusModal').classList.remove('show');
-});
-window.addEventListener('click', e => {
-  if (e.target === document.getElementById('statusModal'))
-    document.getElementById('statusModal').classList.remove('show');
-});
-
-document.getElementById('updateStatusBtn').addEventListener('click', () => {
-  const regId     = document.getElementById('modalRegId').value;
-  const newStatus = document.getElementById('statusSelect').value;
-  const newAttend = document.getElementById('attendSelect').value;
-
-  postAction({ ajax_action: 'update_status', registration_id: regId,
-               new_status: newStatus, new_attend: newAttend })
-    .then(r => {
-      if (!r.ok) { alert('Error: ' + (r.msg || 'Unknown')); return; }
-      const row = document.querySelector(`.guest-row-item[data-reg-id="${regId}"]`);
-      if (!row) { location.reload(); return; }
-      rebuildCell(row, newStatus, newAttend);
-      document.getElementById('statusModal').classList.remove('show');
-      updateGlanceCounts();
-      applyCurrentFilter();
-    });
-});
-
-// ── Filter tabs ───────────────────────────────────────────────────────────────
-function applyFilter(filter) {
-  const q = document.getElementById('guestSearchInput').value.toLowerCase().trim();
-  document.querySelectorAll('.guest-row-item').forEach(row => {
-    const inFilter = filter === 'all' || row.dataset.filter === filter;
-    const inSearch = !q || row.dataset.name.includes(q) || row.dataset.email.includes(q);
-    row.style.display = (inFilter && inSearch) ? '' : 'none';
-  });
-}
-
-function applyCurrentFilter() {
-  const active = document.querySelector('.filter-btn.active');
-  applyFilter(active ? active.dataset.filter : 'all');
-}
-
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    applyFilter(btn.dataset.filter);
-  });
-});
-
-// Glance widget shortcuts
-document.querySelectorAll('.glance-widget-btn[data-filter]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const f = btn.dataset.filter;
-    if (f === 'checkin') return;
-    const target = document.querySelector(`.filter-btn[data-filter="${f}"]`);
-    if (target) target.click();
-    document.querySelector('.guest-list-section').scrollIntoView({ behavior: 'smooth' });
-  });
-});
-
-// ── Live search ───────────────────────────────────────────────────────────────
-document.getElementById('guestSearchInput').addEventListener('input', () => applyCurrentFilter());
-
-// ── Glance counter refresh ────────────────────────────────────────────────────
-function updateGlanceCounts() {
-  const rows = document.querySelectorAll('.guest-row-item');
-  let approved = 0, going = 0, pending = 0;
-  const total = rows.length;
-
-  rows.forEach(r => {
-    if (r.dataset.status === 'approved') approved++;
-    if (r.dataset.attend === 'going')    going++;
-    if (r.dataset.status === 'pending')  pending++;
-  });
-
-  document.getElementById('glanceApproved').textContent = approved;
-  document.getElementById('glanceRegistered').innerHTML =
-    '<i class="fa-solid fa-circle status-dot-black"></i> ' + total + ' Registered';
-  document.getElementById('glanceGoing').innerHTML =
-    '<i class="fa-solid fa-circle status-dot-green"></i> ' + going + ' Going';
-  document.getElementById('glancePending').innerHTML =
-    '<i class="fa-solid fa-circle status-dot-yellow"></i> ' + pending + ' Pending';
-  document.getElementById('pendingBadge').textContent = pending;
-
-  const pct = CAP > 0 ? Math.min(100, Math.round((approved / CAP) * 100)) : 0;
-  document.getElementById('glanceBar').style.width = pct + '%';
-}
-</script>
-<script src="js/navbar.js"></script>
+  <!-- PHP-generated constants — must come BEFORE manage-event-guest.js -->
+  <script>
+    const EVENT_ID = <?php echo $event_id; ?>;
+    const CAP      = <?php echo $capacity ? intval($capacity) : 0; ?>;
+  </script>
+  <script src="js/manage-event-guest.js"></script>
+  <script src="js/navbar.js"></script>
 </body>
 </html>

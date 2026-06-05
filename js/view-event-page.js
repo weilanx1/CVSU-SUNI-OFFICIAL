@@ -1,190 +1,98 @@
-// --- 1. STATE MANAGER ---
-function updateTicketUI(state) {
-    const container = document.getElementById('ticket-ui');
-    if (!container) return;
+// view-event-page.js
+// The ticket UI states (initial, pending, approved, rejected, waitlisted) are
+// rendered server-side by PHP. This file only handles interactive behaviour:
+// dropdowns, modal open/close, attendance updates, and cancel flow.
+// Do NOT call updateTicketUI() on page load — PHP already rendered the right state.
 
-    // Profile Template
-    const profile = `
-        <div class="ticket-profile">
-            <img src="images/sid.png" style="width: 70px; height: 70px; border-radius: 50%;">
-            <div>
-                <h3 style="margin:0;">Xeed Love L. Magtira</h3>
-                <p style="margin:0; font-size: 12px; color: #666;">xeedlove.magtira@cvsu.edu.ph</p>
+// ── Department dropdown ───────────────────────────────────────────────────────
+function toggleDeptDropdown() {
+    document.getElementById('deptDropdown').classList.toggle('open');
+}
+function updateDropdown(code) {
+    document.getElementById('selectedDept').textContent = code;
+    document.getElementById('deptDropdown').classList.remove('open');
+}
+
+// ── Registration modal ────────────────────────────────────────────────────────
+function openRegisterModal() {
+    document.getElementById('req').classList.add('open');
+}
+
+// ── Ticket modal ──────────────────────────────────────────────────────────────
+function openTicketModal()  { document.getElementById('ticketModal').classList.add('open'); }
+function closeTicketModal() { document.getElementById('ticketModal').classList.remove('open'); }
+
+// ── Cancel state (injected into ticket-state-content) ────────────────────────
+function showCancelState() {
+    const container = document.getElementById('ticket-state-content');
+    container.innerHTML = `
+        <div class="ticket-body-layout text-center">
+            <div class="ticket-cancel-headline">
+                Cancel Registration <i class="fa-solid fa-circle-xmark text-red-icon"></i>
             </div>
-        </div>`;
-
-    let bodyContent = '';
-
-    switch(state) {
-        case 'initial':
-            // Halimbawa sa 'initial' case:
-bodyContent = `
-    ${profile}
-    <div class="content-wrapper">
-        <h4 style="margin: 0;">Approval required</h4>
-        <p style="margin: 5px 0;">Welcome, Xeed! Please register to join the event.</p>
-        <button id="openReq" style="width: 100%; margin-top: 10px;">Request to Join</button>
-    </div>
-`;
-            break;
-
-        case 'pending':
-            bodyContent = `
-                ${profile}
-                <div class="content-wrapper">
-                <h4 style="color: #4c9b5d; margin: 10px 0;">Pending Approval 🔄</h4>
-                <p>Welcome, Xeed! We will let you know if your registration is approved.</p>
-                <p style="font-size: 13px; margin-top: 10px;">
-                    No longer to attend? Notify the host by 
-                    <a href="#" id="cancelLink" style="color: red; text-decoration: underline;">cancelling your registration.</a>
-                </p>
-                </div>
-            `;
-            break;
-
-        case 'cancel-confirm':
-            bodyContent = `
-                <div class="cancel-confirm-box" style="text-align:center;">
-                    <h3 style="margin-top:0;">Cancel Registration ❌</h3>
-                    <p>Click Confirm to cancel your registration. We'll let the host notified about your cancellation.</p>
-                    <div class="cancel-actions" style="display: flex; gap: 10px; margin-top: 15px;">
-                        <button id="doCancel" class="btn-confirm" style="flex:1; padding: 10px;">Confirm</button>
-                        <button id="backToPending" class="btn-dismiss" style="flex:1; padding: 10px;">Dismiss</button>
-                    </div>
-                </div>
-            `;
-            break;
-
-        case 'cancelled-by-user':
-            bodyContent = `
-                ${profile}
-                <h4 style="color: #666; margin: 15px 0;">Registration Cancelled 🚫</h4>
-                <p>You have successfully cancelled your registration request.</p>
-                <button id="reRegister" style="width: 100%; margin-top: 10px; padding: 10px;">Register Again</button>
-            `;
-            break;
-      case 'approved':
-    bodyContent = `
-        <div class="content-wrapper" style="width: 100%; display: flex; flex-direction: column; padding-top: 20px;">
-            <div style="display: flex; align-items: flex-start; gap: 15px; margin-bottom: 20px;">
-                <img src="images/sid.png" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover;">
-                <div style="display: flex; flex-direction: column; margin-top: 10px;">
-                    <h4 style="margin: 0; font-size: 18px; color: #2e7d32; display: flex; align-items: center; gap: 5px;">
-                        REQUEST APPROVED <span style="font-size: 20px;">✔</span>
-                    </h4>
-                     <p style="margin: 5px 0; font-size: 14px; font-weight: bold;">You're on the list. See you there!</p>
-                    <p style="margin: 0; font-size: 12px; color: #777;">Save this ticket. Your unique QR code is required for entry.</p>
-                </div>
+            <div class="ticket-cancel-body-msg">
+                Click Confirm to cancel your registration. We'll let the host notified about your cancellation.
             </div>
-            
-            <div style="background: #ffff; padding: 15px; border: 1px solid #eee; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; width: 100%; box-sizing: border-box; margin-top: auto; box-shadow: 5px 5px 10px 2px rgba(0, 0, 0, 0.3); gap: 15px">
-                <div style="width: 80px; flex: 1; height: 40px; display: flex; align-items: center;">
-                    <img src="images/logo.png" alt="Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;">
-                </div>
-                
-                <button id="viewTicketBtn" style="padding: 10px 20px; background: #77b800; flex: 1.5; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">
-                    VIEW TICKET
-                </button>
+            <div class="ticket-cancel-buttons-wrapper">
+                <button class="btn-confirm-cancel" onclick="confirmCancellation()">Confirm</button>
+                <button class="btn-dismiss-cancel" onclick="window.location.reload()">Dismiss</button>
             </div>
         </div>
     `;
-    break;
-        case 'declined':
-            bodyContent = `
-                ${profile}
-                <h4 style="color: #ff4d4d; margin: 10px 0;">Request Declined ❌</h4>
-                <p style="margin-bottom: 15px;">Sorry, the host declined your request. But don't worry, there are plenty more events waiting for you!</p>
-                <a href="events.html" style="font-weight: bold; color: #222;">[Browse Other Events]</a>
-            `;
-            break;
-    }
+}
 
-    // Pag-render ng Body content lamang
-    container.innerHTML = bodyContent;
-    // ... nasa loob ng updateTicketUI function, pagkatapos ng container.innerHTML = bodyContent;
+function confirmCancellation() {
+    postAction({ ajax_action: 'cancel_registration' }).then(r => {
+        if (r.ok) {
+            window.location.reload();
+        } else {
+            alert('Error: ' + (r.msg || 'Could not cancel registration.'));
+        }
+    });
+}
 
-    if (state === 'initial') {
-        // ... existing codes ...
-    } else if (state === 'approved') {
-        // DITO: Ito ang nagbubukas ng ticketModal
-        document.getElementById("viewTicketBtn").addEventListener("click", () => {
-            document.getElementById("ticketModal").classList.add("open");
+// ── Attendance update (inside ticket modal) ───────────────────────────────────
+function setAttendance(value) {
+    postAction({ ajax_action: 'update_attendance', attendance: value }).then(r => {
+        if (!r.ok) { alert('Error updating attendance.'); return; }
+        const badge = document.getElementById('ticket-modal-attend-badge');
+        if (badge) {
+            badge.className = 'ticket-status-badge-inline ' + (value === 'going' ? 'badge-going' : 'badge-not-going');
+            badge.textContent = value === 'going' ? '✔ Going' : '✖ Not Going';
+        }
+        const mGoing    = document.getElementById('modal-btn-going');
+        const mNotGoing = document.getElementById('modal-btn-not-going');
+        if (mGoing)    mGoing.classList.toggle('active', value === 'going');
+        if (mNotGoing) mNotGoing.classList.toggle('active', value === 'not_going');
+    });
+}
+
+// ── DOM ready ─────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Registration modal close
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const reqModal      = document.getElementById('req');
+    if (modalCloseBtn) modalCloseBtn.addEventListener('click', () => reqModal.classList.remove('open'));
+    if (reqModal)      reqModal.addEventListener('click', (e) => { if (e.target === reqModal) reqModal.classList.remove('open'); });
+
+    // Ticket modal close (backdrop click)
+    const ticketModal = document.getElementById('ticketModal');
+    if (ticketModal) ticketModal.addEventListener('click', (e) => { if (e.target === ticketModal) closeTicketModal(); });
+
+    // Registration form submission
+    const regForm = document.getElementById('regForm');
+    if (regForm) {
+        regForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            reqModal.classList.remove('open');
+
+            postAction({ ajax_action: 'register' }).then(r => {
+                if (!r.ok) { alert('Error: ' + (r.msg || 'Unknown error')); return; }
+                // Reload so PHP renders the correct new state (pending / approved / waitlisted)
+                window.location.reload();
+            }).catch(() => alert('Network error. Please try again.'));
         });
     }
-    // --- RE-ATTACH EVENT LISTENERS ---
-    if (state === 'initial') {
-        document.getElementById("openReq").addEventListener("click", () => document.getElementById("req").classList.add("open"));
-    } else if (state === 'pending') {
-        document.getElementById('cancelLink').addEventListener('click', (e) => { e.preventDefault(); updateTicketUI('cancel-confirm'); });
-    } else if (state === 'cancel-confirm') {
-        document.getElementById('doCancel').addEventListener('click', () => updateTicketUI('cancelled-by-user'));
-        document.getElementById('backToPending').addEventListener('click', () => updateTicketUI('pending'));
-    } else if (state === 'cancelled-by-user') {
-        document.getElementById('reRegister').addEventListener('click', () => updateTicketUI('initial'));
-    }
-}
 
-// --- 2. MODAL LOGIC ---
-document.addEventListener("DOMContentLoaded", () => {
-    const modal = document.getElementById("req");
-    const closeBtn = document.querySelector(".modal-close");
-    if (closeBtn) closeBtn.addEventListener("click", () => modal.classList.remove("open"));
-    if (modal) modal.addEventListener("click", (e) => { if(e.target === modal) modal.classList.remove("open"); });
-});
-// --- 3. FORM SUBMISSION LOGIC ---
-const regForm = document.getElementById("regForm");
-if (regForm) {
-    regForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const formData = {
-            firstName: document.getElementById("firstName").value,
-            lastName: document.getElementById("lastName").value,
-            studentId: document.getElementById("studentID").value,
-            department: document.getElementById("selectedDept").textContent
-        };
-        fetch('process_registration.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
-        })
-        .then(() => {
-            alert("Registration Request Sent!");
-            const modal = document.getElementById("req");
-            if (modal) modal.classList.remove("open");
-            regForm.reset();
-            updateTicketUI('pending'); 
-        })
-        .catch(error => console.error('Error:', error));
-    });
-}
-
-// --- 4. DROPDOWN LOGIC ---
-document.querySelectorAll(".custom-dropdown .dropdown-header").forEach(header => {
-    header.addEventListener("click", () => {
-        const parent = header.parentElement;
-        document.querySelectorAll(".custom-dropdown").forEach(d => { if(d !== parent) d.classList.remove("open"); });
-        parent.classList.toggle("open");
-    });
-});
-function updateDropdown(spanId, value) {
-    document.getElementById(spanId).textContent = value;
-    document.querySelectorAll(".custom-dropdown").forEach(d => d.classList.remove("open"));
-}
-// --- 5. INITIAL LOAD ---
-document.addEventListener('DOMContentLoaded', () => {
-    updateTicketUI('initial');
-});
-// Ilagay ito sa dulo ng iyong JS file para sa mga MODAL
-document.addEventListener("DOMContentLoaded", () => {
-    // Para sa Registration Modal
-    const reqModal = document.getElementById("req");
-    const closeReq = document.querySelector("#req .modal-close");
-    if (closeReq) closeReq.addEventListener("click", () => reqModal.classList.remove("open"));
-
-    // DITO: Para sa Ticket Modal (Hydrofest)
-    const ticketModal = document.getElementById("ticketModal");
-    const closeTicket = document.querySelector("#ticketModal .modal-close");
-    if (closeTicket) {
-        closeTicket.addEventListener("click", () => ticketModal.classList.remove("open"));
-    }
 });

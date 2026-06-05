@@ -539,12 +539,14 @@ if ($dr) while ($d = $dr->fetch_assoc()) $dept_list[] = $d;
 
     <script src="js/navbar.js"></script>
     <script>
-    const EVENT_ID = <?php echo intval($event_id); ?>;
-    const FIRST_NAME = <?php echo json_encode(explode(' ', htmlspecialchars($user_full_name))[0]); ?>;
-    const PROFILE_PICTURE = <?php echo json_encode($profile_picture); ?>;
-    const USER_EMAIL = <?php echo json_encode($user_email); ?>;
+    // ── PHP-injected constants ────────────────────────────────────────────────
+    const EVENT_ID       = <?php echo intval($event_id); ?>;
+    const FIRST_NAME     = <?php echo json_encode(explode(' ', $user_full_name)[0]); ?>;
+    const PROFILE_PICTURE= <?php echo json_encode($profile_picture); ?>;
+    const USER_EMAIL     = <?php echo json_encode($user_email); ?>;
     const USER_FULL_NAME = <?php echo json_encode($user_full_name); ?>;
 
+    // ── AJAX helper ───────────────────────────────────────────────────────────
     async function postAction(payload) {
         const fd = new FormData();
         Object.entries(payload).forEach(([k, v]) => fd.append(k, v));
@@ -554,97 +556,86 @@ if ($dr) while ($d = $dr->fetch_assoc()) $dept_list[] = $d;
         return res.json();
     }
 
-    function openRegisterModal() {
-        document.getElementById('req').classList.add('open');
-    }
+    // ── Modal helpers ─────────────────────────────────────────────────────────
+    function openRegisterModal()  { document.getElementById('req').classList.add('open'); }
+    function openTicketModal()    { document.getElementById('ticketModal').classList.add('open'); }
+    function closeTicketModal()   { document.getElementById('ticketModal').classList.remove('open'); }
 
-    document.getElementById('modalCloseBtn').addEventListener('click', () => {
-        document.getElementById('req').classList.remove('open');
-    });
-
-    document.getElementById('regForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        document.getElementById('req').classList.remove('open');
-        postAction({ ajax_action: 'register' }).then(r => {
-            if (!r.ok) { alert('Error: ' + (r.msg || 'Unknown error')); return; }
-            
-            // IF THE STATE RETURNED IS PENDING, FORCIBLY RENDER THE PENDING UI FRAME IMMEDIATELY BEFORE RELOAD FOR A SMOOTH TRANSITION
-            if(r.status === 'pending') {
-                const container = document.getElementById('ticket-state-content');
-                container.innerHTML = `
-                    <div class="ticket-body-layout">
-                        <div class="ticket-profile-row">
-                            <img src="${PROFILE_PICTURE}" alt="Profile">
-                            <div class="ticket-profile-details">
-                                <h3>\${USER_FULL_NAME}</h3>
-                                <p>\${USER_EMAIL}</p>
-                            </div>
-                        </div>
-                        <div class="ticket-status-text text-teal">
-                            Pending Approval <i class="fa-solid fa-arrow-rotate-right fa-spin-hover"></i>
-                        </div>
-                        <div class="ticket-welcome-msg">Welcome, \${FIRST_NAME}! We will let you know if your registration approves by the host.</div>
-                        <div class="ticket-cancel-notice">No longer to attend? Notify the host by <a href="javascript:void(0)" onclick="showCancelState()">cancelling your registration.</a></div>
-                    </div>
-                `;
-            }
-            
-            // Reload window to lock states cleanly with session/database updates
-            window.location.reload();
-        });
-    });
-
+    // ── Cancel flow ───────────────────────────────────────────────────────────
     function showCancelState() {
-        const container = document.getElementById('ticket-state-content');
-        container.innerHTML = `
+        document.getElementById('ticket-state-content').innerHTML = `
             <div class="ticket-body-layout text-center">
                 <div class="ticket-cancel-headline">
                     Cancel Registration <i class="fa-solid fa-circle-xmark text-red-icon"></i>
                 </div>
                 <div class="ticket-cancel-body-msg">
-                    Click Confirm to cancel your registration. We'll let the host notified about your cancellation.
+                    Click Confirm to cancel your registration. We'll let the host know about your cancellation.
                 </div>
                 <div class="ticket-cancel-buttons-wrapper">
                     <button class="btn-confirm-cancel" onclick="confirmCancellation()">Confirm</button>
                     <button class="btn-dismiss-cancel" onclick="window.location.reload()">Dismiss</button>
                 </div>
-            </div>
-        `;
+            </div>`;
     }
 
     function confirmCancellation() {
         postAction({ ajax_action: 'cancel_registration' }).then(r => {
-            if (r.ok) {
-                window.location.reload();
-            } else {
-                alert('Error: ' + (r.msg || 'Could not cancel execution.'));
-            }
+            if (r.ok) { window.location.reload(); }
+            else { alert('Error: ' + (r.msg || 'Could not cancel registration.')); }
         });
     }
 
+    // ── Attendance update (inside ticket modal) ───────────────────────────────
     function setAttendance(value) {
         postAction({ ajax_action: 'update_attendance', attendance: value }).then(r => {
             if (!r.ok) { alert('Error updating attendance.'); return; }
             const badge = document.getElementById('ticket-modal-attend-badge');
             if (badge) {
-                badge.className = 'ticket-status-badge-inline ' + (value === 'going' ? 'badge-going' : 'badge-not-going');
+                badge.className   = 'ticket-status-badge-inline ' + (value === 'going' ? 'badge-going' : 'badge-not-going');
                 badge.textContent = value === 'going' ? '✔ Going' : '✖ Not Going';
             }
-            const mGoing = document.getElementById('modal-btn-going');
+            const mGoing    = document.getElementById('modal-btn-going');
             const mNotGoing = document.getElementById('modal-btn-not-going');
-            if (mGoing) mGoing.classList.toggle('active', value === 'going');
+            if (mGoing)    mGoing.classList.toggle('active', value === 'going');
             if (mNotGoing) mNotGoing.classList.toggle('active', value === 'not_going');
         });
     }
 
-    function openTicketModal() { document.getElementById('ticketModal').classList.add('open'); }
-    function closeTicketModal() { document.getElementById('ticketModal').classList.remove('open'); }
-    
+    // ── Department dropdown ───────────────────────────────────────────────────
     function toggleDeptDropdown() { document.getElementById('deptDropdown').classList.toggle('open'); }
     function updateDropdown(code) {
         document.getElementById('selectedDept').textContent = code;
         document.getElementById('deptDropdown').classList.remove('open');
     }
+
+    // ── DOM ready — all addEventListener calls go here ────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // Registration modal — close button and backdrop
+        const reqModal      = document.getElementById('req');
+        const modalCloseBtn = document.getElementById('modalCloseBtn');
+        if (modalCloseBtn) modalCloseBtn.addEventListener('click', () => reqModal.classList.remove('open'));
+        if (reqModal)      reqModal.addEventListener('click', e => { if (e.target === reqModal) reqModal.classList.remove('open'); });
+
+        // Ticket modal — backdrop click
+        const ticketModal = document.getElementById('ticketModal');
+        if (ticketModal) ticketModal.addEventListener('click', e => { if (e.target === ticketModal) closeTicketModal(); });
+
+        // Registration form submit
+        const regForm = document.getElementById('regForm');
+        if (regForm) {
+            regForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                reqModal.classList.remove('open');
+                postAction({ ajax_action: 'register' }).then(r => {
+                    if (!r.ok) { alert('Error: ' + (r.msg || 'Unknown error')); return; }
+                    // Reload — PHP will render the correct new state
+                    window.location.reload();
+                }).catch(() => alert('Network error. Please try again.'));
+            });
+        }
+
+    });
     </script>
 </body>
 </html>

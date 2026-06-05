@@ -20,13 +20,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 display: none;
                 position: absolute;
                 right: 0;
-                top: 45px;
+                top: 50px;
                 background-color: #ffffff;
                 min-width: 230px;
                 box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.08);
                 border-radius: 16px;
                 z-index: 9999;
-                padding: 16px 0 10px 0;
+                padding: 0px 0 10px 0;
                 font-family: 'Poppins', sans-serif;
                 text-align: left;
                 box-sizing: border-box;
@@ -36,23 +36,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     display: flex; 
                     align-items: center; 
                     gap: 12px; 
-                    padding: 0 16px 14px 16px;
+                    padding: 0 16px 10px 16px;
                     width: 100%;
                     box-sizing: border-box;
                 ">
-                    <img src="${currentAvatarSrc}" alt="Avatar" style="
-                        width: 42px; 
-                        height: 42px; 
-                        border-radius: 50%; 
-                        object-fit: cover;
-                    ">
-                    <div style="display: flex; flex-direction: column; gap: 0px; min-width: 0;">
-                        <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: #2d2d2d; font-family: 'Poppins', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Kraig Gonzales</h4>
-                        <p style="margin: 0; font-size: 11.5px; color: #8e8e93; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">krggnzls@gmail.com</p>
-                    </div>
+
+        
                 </div>
                 
-                <hr style="border: 0; height: 1px; background-color: #f2f2f7; margin: 0 0 4px 0; width: 100%;">
+                
                 
                 <a href="sign-in.php" class="sign-out-item" id="signOutLink" style="
                     color: #fffff !important;
