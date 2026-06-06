@@ -173,7 +173,7 @@ $black_placeholder = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%2
             <li><a href="index.php">CvSU Events</a></li>
             <li><a href="Myprofile.php">My Profile</a></li>
             <?php if ($is_admin): ?>
-            <li><a href="dashboard.php">Organization Dashboard</a></li>
+            <li><a href="org-profile.php">Organization Dashboard</a></li>
             <?php endif; ?>
             <li class="nav-icons">
                 <i class="fa-solid fa-magnifying-glass"></i>

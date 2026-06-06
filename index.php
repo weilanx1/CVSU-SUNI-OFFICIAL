@@ -337,7 +337,7 @@ foreach ($visible_events as $ev) {
             <li><a href="index.php" class="active">CvSU Events</a></li>
             <li><a href="Myprofile.php">My Profile</a></li>
             <?php if ($is_admin): ?>
-            <li><a href="dashboard.php">Organization Dashboard</a></li>
+            <li><a href="org-profile.php">Organization Dashboard</a></li>
             <?php endif; ?>
             <li class="nav-icons">
                 <i class="fa-solid fa-magnifying-glass"></i>
